@@ -1,0 +1,22 @@
+{
+  "name": "sam-tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MC-LiuWei/sam-utils.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MC-LiuWei/sam-utils/issues"
+  },
+  "homepage": "https://github.com/MC-LiuWei/sam-utils#readme"
+}
