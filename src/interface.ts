@@ -12,3 +12,7 @@ export type BaseType = "string" |
 export type TreeChildren<P = any> = P & {
   children: TreeChildren<P>[]
 }
+
+export type ListToTreeSchema = {
+  [key: string]: string;
+}
