@@ -251,14 +251,14 @@
         "signature": "1a0965469b80125d9a5ea86d9b7b2ff77da41193d633310c80825eba11c07c8c",
         "affectsGlobalScope": false
       },
-      "./src/index.ts": {
-        "version": "0ac17cb4e2eb08c178d6f48b21cb747888c151bf7dfca21c5ef59007e82f5c13",
-        "signature": "2ae45f74093bf4afd3a01c44221db6f4a2d9d48686aa366faea232f574bda0de",
-        "affectsGlobalScope": false
-      },
       "./src/set.ts": {
         "version": "6626cab49dc1080156d824853612041650343c44b6fad919f849092ecacf794d",
         "signature": "1954d44df8f1a9040304846e672d351f0253190e789e4209a1e4b4e10fbcb959",
+        "affectsGlobalScope": false
+      },
+      "./src/index.ts": {
+        "version": "e4124b0812280008a4818aaee52cf421038fde785ba6763d7cc0cc0a193d16dc",
+        "signature": "edd457b7d566be1572477385a2c0584e259eb1767f8187652f7b45fe287991af",
         "affectsGlobalScope": false
       }
     },
@@ -300,6 +300,7 @@
         "./src/listtotree.ts",
         "./src/platform.ts",
         "./src/query.ts",
+        "./src/set.ts",
         "./src/type.ts"
       ],
       "./src/interface.ts": [
@@ -335,6 +336,7 @@
         "./src/listtotree.ts",
         "./src/platform.ts",
         "./src/query.ts",
+        "./src/set.ts",
         "./src/type.ts"
       ],
       "./src/listtotree.ts": [
