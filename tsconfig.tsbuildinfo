@@ -227,7 +227,7 @@
         "affectsGlobalScope": false
       },
       "./src/type.ts": {
-        "version": "c429658ff100318dc1f767ef46b29bf39fd3cdbc9e6fc5ec3a4fd2fea7091dfc",
+        "version": "8584a8a9ceabd1b22ad440a2d06d67d32bf3281007d3ec959ed69ba473df4c14",
         "signature": "c70bf49015055a901eb39080d5f9ebe2e653b2e6a52a91cb0261f8bd87717992",
         "affectsGlobalScope": false
       },
@@ -247,13 +247,18 @@
         "affectsGlobalScope": false
       },
       "./src/platform.ts": {
-        "version": "56f500dc894503cb37653d86e66218ca2c8bbd0a1f5fab96ee4726a66fffb73c",
-        "signature": "30ffe30a6fb9e075a2be8ac2b3f0907597e88a6360820b626dedb564c27b6b98",
+        "version": "6a287fdce16786adf3127c99707287f2d974672c82e6fcd01e1690e4e15dadc9",
+        "signature": "1a0965469b80125d9a5ea86d9b7b2ff77da41193d633310c80825eba11c07c8c",
         "affectsGlobalScope": false
       },
       "./src/index.ts": {
         "version": "0ac17cb4e2eb08c178d6f48b21cb747888c151bf7dfca21c5ef59007e82f5c13",
         "signature": "2ae45f74093bf4afd3a01c44221db6f4a2d9d48686aa366faea232f574bda0de",
+        "affectsGlobalScope": false
+      },
+      "./src/set.ts": {
+        "version": "6626cab49dc1080156d824853612041650343c44b6fad919f849092ecacf794d",
+        "signature": "1954d44df8f1a9040304846e672d351f0253190e789e4209a1e4b4e10fbcb959",
         "affectsGlobalScope": false
       }
     },
@@ -307,12 +312,16 @@
       ],
       "./src/platform.ts": [
         "./node_modules/@types/platform/index.d.ts",
-        "./node_modules/tslib/tslib.d.ts"
+        "./node_modules/tslib/tslib.d.ts",
+        "./src/index.ts"
       ],
       "./src/query.ts": [
         "./node_modules/tslib/tslib.d.ts",
         "./src/index.ts",
         "./src/type.ts"
+      ],
+      "./src/set.ts": [
+        "./node_modules/tslib/tslib.d.ts"
       ],
       "./src/type.ts": [
         "./node_modules/tslib/tslib.d.ts",
@@ -386,6 +395,7 @@
       "./src/listtotree.ts",
       "./src/platform.ts",
       "./src/query.ts",
+      "./src/set.ts",
       "./src/type.ts"
     ]
   },

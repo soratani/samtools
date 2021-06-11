@@ -9,7 +9,7 @@ export function isArray(arr: any): arr is any[] {
 }
 
 export function isObject(obj: any): boolean {
-    return typeof obj === 'object' && !isArray(obj) && !isFunc(obj);
+    return typeof obj === 'object' && !isArray(obj) && !isFunc(obj) && !isNull(obj);
 }
 
 export function isString(str: any): str is string {
@@ -61,3 +61,5 @@ export function isEmpty(value: any) {
     if (isString(value)) return !value;
     return false;
 }
+
+
