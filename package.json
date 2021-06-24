@@ -1,6 +1,6 @@
 {
   "name": "@frade-sam/samtools",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "",
   "main": "lib/index.js",
   "files": [
@@ -20,8 +20,7 @@
   },
   "homepage": "https://github.com/MC-LiuWei/sam-utils#readme",
   "devDependencies": {
-    "@types/platform": "^1.3.3",
-    "tslib": "^2.2.0"
+    "@types/platform": "^1.3.3"
   },
   "dependencies": {
     "platform": "^1.3.6"
