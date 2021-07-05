@@ -5,3 +5,4 @@ export * from './listToTree';
 export * from './platform';
 export * from './array';
 export * from './set';
+export * from './enumTolist';

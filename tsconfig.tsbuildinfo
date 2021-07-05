@@ -226,6 +226,11 @@
         "signature": "c70bf49015055a901eb39080d5f9ebe2e653b2e6a52a91cb0261f8bd87717992",
         "affectsGlobalScope": false
       },
+      "./src/enumtolist.ts": {
+        "version": "ab0770da4c5a8ef270706de0477dc727f7c0be9a70d841ac08ee88d9b9cd2a10",
+        "signature": "6f80c5a963c98e9247b45304c8ada30283dba4e14f4bb342f3a66be4637509b0",
+        "affectsGlobalScope": false
+      },
       "./src/query.ts": {
         "version": "320759c757a9c0f3cb9b7c8f7f1a5620b1361eb71a978e3007d2a1bf0cf20364",
         "signature": "46ef4c9f2b2a409af0315c3bdbdd9a71c9f8f6cb18cdf08666335b86efced227",
@@ -252,8 +257,8 @@
         "affectsGlobalScope": false
       },
       "./src/index.ts": {
-        "version": "e4124b0812280008a4818aaee52cf421038fde785ba6763d7cc0cc0a193d16dc",
-        "signature": "edd457b7d566be1572477385a2c0584e259eb1767f8187652f7b45fe287991af",
+        "version": "5a8efbdc5463936f98c36439409f412ef3e55850841cd8510c32d641a49910d3",
+        "signature": "66d4dd80f0bc79af84ad7a02ac68e600db33b5affe99cc3352678812ae112c16",
         "affectsGlobalScope": false
       }
     },
@@ -284,8 +289,12 @@
       "configFilePath": "./tsconfig.json"
     },
     "referencedMap": {
+      "./src/enumtolist.ts": [
+        "./src/type.ts"
+      ],
       "./src/index.ts": [
         "./src/array.ts",
+        "./src/enumtolist.ts",
         "./src/interface.ts",
         "./src/listtotree.ts",
         "./src/platform.ts",
@@ -312,6 +321,7 @@
     "exportedModulesMap": {
       "./src/index.ts": [
         "./src/array.ts",
+        "./src/enumtolist.ts",
         "./src/interface.ts",
         "./src/listtotree.ts",
         "./src/platform.ts",
@@ -371,6 +381,7 @@
       "../../../.nvm/versions/node/v12.18.3/lib/node_modules/typescript/lib/lib.esnext.weakref.d.ts",
       "./node_modules/@types/platform/index.d.ts",
       "./src/array.ts",
+      "./src/enumtolist.ts",
       "./src/index.ts",
       "./src/interface.ts",
       "./src/listtotree.ts",
