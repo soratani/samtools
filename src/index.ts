@@ -6,3 +6,4 @@ export * from './platform';
 export * from './array';
 export * from './set';
 export * from './enumTolist';
+export * from './color';
