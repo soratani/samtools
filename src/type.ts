@@ -28,7 +28,7 @@ export function isSymbol(sbl: any): sbl is symbol {
     return typeof sbl === 'symbol';
 }
 
-export function isNum(num: number): num is number {
+export function isNum(num: any): num is number {
     return typeof num === 'number';
 }
 
