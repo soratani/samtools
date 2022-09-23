@@ -1,0 +1,30 @@
+name: create pull request
+
+on:
+  push:
+    branches:
+      - dev
+
+env:
+  CI: true
+
+jobs:
+  pr:
+    runs-on: macos-latest
+    name: pr
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: username
+        run: |
+          git config user.name "${{ github.actor }}"
+
+      - name: create pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          branch: master
+          signoff: true
+          
