@@ -17,12 +17,10 @@ function repeatLetter(word: string, num: number) {
 
 export function rgbToHex(_color: string) {
   let arr = _color.replace('rgb(', '').replace(')', '').split(',');
-  let r = +arr[0].split('(')[1];
+  let r = +arr[0];
   let g = +arr[1];
-  let b = +arr[2].split(')')[0];
-  let value: any = (1 << 24) + r * (1 << 16) + g * (1 << 8) + b;
-  value = value.toString(16);
-  return '#' + value.slice(1);
+  let b = +arr[2];
+  return '#' + (r << 16 | g << 8 | b).toString(16);
 }
 
 export function rgbaToHex(_color: string) {
@@ -33,20 +31,17 @@ export function rgbaToHex(_color: string) {
     } else {
       hexNum = Number(chanel).toString(16)
     }
-    console.log(a, chanel, i, hexNum);
     return `${a}${hexNum.length === 1 ? '0' + hexNum : hexNum}`;
   }, '#')
 }
 
-export function rgb(_color: string) {
+export function hexToRgb(_color: string) {
   try {
-    if(!_color || !_color.startsWith('#')) return '';
-    let hexNum: any = (_color.startsWith('#') ? _color : `#${_color}`).substring(1);
-    hexNum = '0x' + (hexNum.length < 6 ? repeatLetter(hexNum, 2) : hexNum);
-    var r = hexNum >> 16;
-    var g = hexNum >> 8 & '0xff' as any;
-    var b = hexNum & '0xff' as any;
-    return `rgb(${r},${g},${b})`;
+    if(!_color.startsWith('#')) return '';
+    let hex: any = _color.replace('#','');
+    hex = hex.length < 6 ? repeatLetter(hex, 2):hex;
+    hex = `0x${hex}`;
+    return `rgb(${hex >> 16},${hex >> 8 & 0xff},${hex & 0xff})`
   } catch (error) {
     return ''
   }
@@ -120,4 +115,3 @@ export function opacity(code: string, num?: number): string {
   }
   return _color;
 }
-
