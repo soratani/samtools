@@ -27,8 +27,10 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           commit-message: Update report
-          committer: Lauweal <lemonpaimc@126.com>
+          committer: lauweal <lemonpaimc@126.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
+          delete-branch: true
           title: '[Example] Update report'
           body: |
             Update report
@@ -43,5 +45,5 @@ jobs:
           milestone: 1
           draft: false
           branch: master
-          assignees: Lauweal
-          reviewers: Lauweal
+          assignees: lauweal
+          reviewers: lauweal

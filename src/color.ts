@@ -78,7 +78,6 @@ function colorLuminance(hex: string, lum: number) {
   return rgb;
 }
 
-
 export function color(str: string, num?: number) {
   let _color = str;
   if (str.startsWith('rgba')) {
