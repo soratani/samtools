@@ -41,7 +41,7 @@ jobs:
           git config user.name "${{ github.actor }}"
 
       - name: publish
-        run: npm run publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM }}
 
