@@ -28,6 +28,7 @@ jobs:
           branch: master
           signoff: true
           commit-message: Update report
+          committer: Lauweal <lemonpaimc@126.com>
           milestone: 1
           assignees: Lauweal
           reviewers: Lauweal
