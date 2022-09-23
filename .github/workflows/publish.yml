@@ -1,6 +1,10 @@
 name: publish
 
-on: push
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
 
 env:
   CI: true
@@ -71,7 +75,7 @@ jobs:
           
       - uses: actions/github-script@v6
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.github}}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
