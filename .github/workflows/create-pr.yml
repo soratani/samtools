@@ -27,5 +27,10 @@ jobs:
         with:
           branch: master
           signoff: true
-          draft: true
+          commit-message: Update report
+          milestone: 1
+          assignees: Lauweal
           reviewers: Lauweal
+          labels: |
+            report
+            automated pr
