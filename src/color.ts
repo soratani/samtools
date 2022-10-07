@@ -61,7 +61,12 @@ export function completionHex(color: string) {
   return _color.split('').reduce((a, b) => `${a}${b}${b}`, '#');
 }
 
-
+/**
+ * 明度计算
+ * @param hex 
+ * @param lum 
+ * @returns 
+ */
 function colorLuminance(hex: string, lum: number) {
   hex = String(hex).replace(/[^0-9a-f]/gi, '');
   if (hex.length < 6) {
@@ -78,9 +83,15 @@ function colorLuminance(hex: string, lum: number) {
   return rgb;
 }
 
+/**
+ * 颜色统一为hex
+ * @param str 
+ * @param num 
+ * @returns 
+ */
 export function color(str: string, num?: number) {
   let _color = str;
-  if (str.startsWith('rgba')) {
+  if (str.startsWith('rgba(') || str.startsWith('rgb(')) {
     _color = hex(str);
   }
   if (isUndefined(num)) return _color;
@@ -113,4 +124,13 @@ export function opacity(code: string, num?: number): string {
     return opacity(rgbaToHex(_color), num);
   }
   return _color;
+}
+
+export function complementaryColor(code: string) {
+  const _color = color(code).slice(1);
+  const ind = parseInt(_color, 16);
+  let iter = ((1 << 4 * _color.length) - 1 - ind).toString(16);
+  if(iter.length >= _color.length) return `#${iter}`;
+  iter = new Array(_color.length - 1).fill('0').reduce((a,b) => b + a, iter) as string;
+  return '#' + iter;
 }
