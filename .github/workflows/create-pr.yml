@@ -23,6 +23,6 @@ jobs:
           git config user.name "${{ github.actor }}"
 
       - name: create pull request
-        run: gh pr create -B "master" -l "translation" -r "lauweal" -t "New Translations" -b "create pr"
+        run: gh pr create -B "master" -r "lauweal" -t "New Translations" -b ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
