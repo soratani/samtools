@@ -67,7 +67,7 @@ export function completionHex(color: string) {
  * @param lum 
  * @returns 
  */
-function colorLuminance(hex: string, lum: number) {
+function colorLight(hex: string, lum: number) {
   hex = String(hex).replace(/[^0-9a-f]/gi, '');
   if (hex.length < 6) {
     hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
@@ -83,19 +83,26 @@ function colorLuminance(hex: string, lum: number) {
   return rgb;
 }
 
+function colorDark(hex: string, lum: number) {
+  let rgb = hexToRgb(hex).replace('rgb(', '').replace(')','').split(',');
+  lum = lum || 0;
+  for (var i = 0; i < 3; i++) rgb[i] = Math.floor(Number(rgb[i]) * (1 - lum)) as any;
+  return rgbToHex(`rgb(${rgb.join(',')})`)
+}
+
 /**
  * 颜色统一为hex
  * @param str 
  * @param num 
  * @returns 
  */
-export function color(str: string, num?: number) {
+export function color(str: string, num?: number, dark?: boolean) {
   let _color = str;
   if (str.startsWith('rgba(') || str.startsWith('rgb(')) {
-    _color = hex(str);
+    _color = hexToRgb(hex(str));
   }
-  if (isUndefined(num)) return _color;
-  return colorLuminance(_color, num);
+  if (isUndefined(num)) return str;
+  return dark ? colorDark(_color, num): colorLight(_color, num);
 }
 
 export function opacity(code: string, num?: number): string {
