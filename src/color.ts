@@ -16,11 +16,11 @@ function repeatLetter(word: string, num: number) {
 }
 
 export function rgbToHex(_color: string) {
-  let arr = _color.replace('rgb(', '').replace(')', '').split(',');
+  let arr = _color.replace('rgb(', '').replace(')', '').split(',').map((i) => Number(i));
   let r = +arr[0];
   let g = +arr[1];
   let b = +arr[2];
-  return '#' + (r << 16 | g << 8 | b).toString(16);
+  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6,'0')}`;
 }
 
 export function rgbaToHex(_color: string) {
