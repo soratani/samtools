@@ -7,3 +7,4 @@ export * from './array';
 export * from './set';
 export * from './enumTolist';
 export * from './color';
+export * from './delay';
