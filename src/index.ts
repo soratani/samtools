@@ -1,10 +1,11 @@
 export * from './interface';
 export * from './type';
 export * from './query';
-export * from './listToTree';
 export * from './platform';
 export * from './array';
 export * from './set';
-export * from './enumTolist';
 export * from './color';
 export * from './delay';
+export * from './dom/interface';
+export * as dom from './dom';
+export * as transform from './transform';

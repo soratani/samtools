@@ -23,6 +23,6 @@ jobs:
           git config user.name "${{ github.actor }}"
 
       - name: create pull request
-        run: gh pr create -B "master" -r "lauweal" -t "New Translations" -b ""
+        run: gh pr create -B "master" -r "lauweal" -t "${{ github.event.head_commit.message }}" -b ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
