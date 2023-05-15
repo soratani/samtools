@@ -9,3 +9,4 @@ export * from './delay';
 export * from './dom/interface';
 export * as dom from './dom';
 export * as transform from './transform';
+export * from './log';
