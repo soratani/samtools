@@ -1,7 +1,6 @@
 import { isObject, isEmpty, isString } from ".";
-import { isArray } from "./type";
 
-export function makeObjectToQuery(obj: any): string {
+export function make(obj: string): string {
     if (!isObject(obj) || isEmpty(obj)) return "";
     return Object.entries(obj).reduce((a, b, idx) => {
         const [key, value] = b;
@@ -9,24 +8,19 @@ export function makeObjectToQuery(obj: any): string {
         return `${a}&${key}=${value}`;
     }, "")
 }
-export function makeQueryToObject(str: string) {
+export function parse(str: string = '') {
     if (!isString(str) || isEmpty(str)) return {};
     const [, query] = str.split("?");
-    if (!isString(str) || isEmpty(str)) return {};
-    return query.split("&").reduce((a: any, b) => {
-        if (!isString(b) || isEmpty(b)) return a;
+    if(isEmpty(query)) return {};
+    return query.split("&").filter(Boolean).reduce((a: any, b) => {
         const [key, value] = b.split("=");
-        a[key] = value;
+        if(isEmpty(value)) return a;
+        a[key] = decodeURIComponent(value);
         return a;
     }, {});
 }
 
-export function makeParamsToUrl(url: string, obj: any) {
-    const query = makeObjectToQuery(obj);
-    return `${url}${query}`;
-}
-
-export function makeParamsToUrlPath(url: string, params: string[] | number[]) {
-    if (!isArray(params) || isEmpty(params) || !isString(url) || isEmpty(url)) return url;
-    return [url].concat(params as any).join("/");
+export function makeQueryToURL(url: string, obj: any) {
+    const query = parse(obj);
+    return `${url}?${query}`;
 }
