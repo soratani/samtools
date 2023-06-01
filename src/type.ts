@@ -40,6 +40,10 @@ export function isNull(un?: any): un is null {
     return un === null;
 }
 
+export function isPromise(obj?: any): obj is Promise<any> {
+    return obj instanceof Promise;
+}
+
 export function type(value: any): BaseType {
     if (isString(value)) return "string";
     if (isNum(value)) return "number";
