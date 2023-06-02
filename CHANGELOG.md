@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.3
+
+### Patch Changes
+
+- e9e6c5c: wip
+
 ## 0.0.1
 
 ### Patch Changes
