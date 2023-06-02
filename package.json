@@ -1,6 +1,6 @@
 {
-  "name": "@frade-sam/samtools",
-  "version": "1.2.1",
+  "name": "samtools",
+  "version": "0.0.0",
   "description": "",
   "main": "lib/index.js",
   "files": [
