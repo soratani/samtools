@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.1
+
+### Patch Changes
+
+- cc6083d: 1.2.1
+
 ## 1.1.10
 
 ### Patch Changes
