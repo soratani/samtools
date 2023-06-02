@@ -1,5 +1,12 @@
 # @frade-sam/samtools
 
+## 0.0.1
+
+### Patch Changes
+
+- 614bb64: 0.0.1
+- 0.0.1
+
 ## 1.2.1
 
 ### Patch Changes
