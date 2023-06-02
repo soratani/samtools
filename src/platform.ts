@@ -21,7 +21,7 @@ interface IUserAgent {
 
 export function isMobile() {
     const info = userAgent();
-    return ["iOS", "Windows Phone", "Android",].includes(info.system);
+    return ["iOS", "Windows Phone", "Android"].includes(info.system);
 }
 
 export function userAgent(): IUserAgent {
