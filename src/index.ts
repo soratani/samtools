@@ -5,6 +5,7 @@ export * from './array';
 export * from './set';
 export * from './delay';
 export * from './dom/interface';
+export * as log from './log';
 export * as color from './color';
 export * as dom from './dom';
 export * as query from './query';
