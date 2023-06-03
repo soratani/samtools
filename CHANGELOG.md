@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.5
+
+### Patch Changes
+
+- 43842e0: 1.2.5
+
 ## 1.2.4
 
 ### Patch Changes
