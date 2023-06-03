@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.4
+
+### Patch Changes
+
+- dfea28a: test
+
 ## 1.2.3
 
 ### Patch Changes
