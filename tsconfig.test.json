@@ -5,7 +5,6 @@
         "types": ["jest", "jest-enzyme"],
         "allowJs": true,
         "skipLibCheck": false,
-        "rootDir": ".",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "jsx": "react"
