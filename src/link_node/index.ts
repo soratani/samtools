@@ -1,1 +1,2 @@
-export { default as LinkNode } from './link';
+export { default as Link } from './link';
+export * from './node'

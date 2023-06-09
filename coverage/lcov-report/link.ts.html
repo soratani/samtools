@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">74.41% </span>
+                <span class="strong">73.8% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>64/86</span>
+                <span class='fraction'>62/84</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.8% </span>
+                <span class="strong">73.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>62/84</span>
+                <span class='fraction'>60/82</span>
             </div>
         
             
@@ -183,20 +183,9 @@
 <a name='L118'></a><a href='#L118'>118</a>
 <a name='L119'></a><a href='#L119'>119</a>
 <a name='L120'></a><a href='#L120'>120</a>
-<a name='L121'></a><a href='#L121'>121</a>
-<a name='L122'></a><a href='#L122'>122</a>
-<a name='L123'></a><a href='#L123'>123</a>
-<a name='L124'></a><a href='#L124'>124</a>
-<a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a>
-<a name='L127'></a><a href='#L127'>127</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L121'></a><a href='#L121'>121</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -314,45 +303,38 @@
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
-class Node&lt;V = any&gt; {
-    constructor(value: V) {
-        this.value = value;
-    }
-    value: V;
-    next?: Node;
-}
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { LinkNode } from "./node";
 &nbsp;
-export default class LinkNode&lt;V = any&gt; {
-    constructor(value: V) {
-        this.head = new Node(value);
+&nbsp;
+export default class Link&lt;V = any&gt; {
+    constructor(id: string | number,value: V) {
+        this.head = new LinkNode(id, value);
     }
-    head: Node&lt;V&gt;;
+    head: LinkNode&lt;V&gt;;
 &nbsp;
     /**
      * 插入
      * @param value 值
      * @param head 是否头插入
      */
-    insert(value: V, head = false) {
-        const node = new Node(value);
+    insert(value: LinkNode, head = false) {
+        const node = value;
         if(head) {
             node.next = this.head;
             this.head = node;
             return this.head;
         } else {
-            <span class="missing-if-branch" title="else path not taken" >E</span>let next = this.head.next;
-            if(!next) {
+            let next = this.head.next;
+            <span class="missing-if-branch" title="else path not taken" >E</span>if(!next) {
                 this.head.next = node;
                 return this.head;
-<span class="cstat-no" title="statement not covered" >            }</span>
-            whil<span class="cstat-no" title="statement not covered" >e(next.next) {</span>
-                next = next.next;
-<span class="cstat-no" title="statement not covered" >            }</span>
-            next.next = node;
-<span class="cstat-no" title="statement not covered" >        }</span>
-        return this.head;
+            }
+<span class="cstat-no" title="statement not covered" >            while(next.next) {</span>
+<span class="cstat-no" title="statement not covered" >                next = next.next;</span>
+            }
+<span class="cstat-no" title="statement not covered" >            next.next = node;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        return this.head;</span>
     }
     /**
      * 指定节点插入
@@ -361,77 +343,77 @@ export default class LinkNode&lt;V = any&gt; {
      * @param head 
      * @returns 
      */
-    nodeInsert(value:V, callback: (v: V) =&gt; boolean, head = false) {
-        const node = new Node(value);
+    nodeInsert(id: string | number, value:LinkNode,head = false) {
+        const node = value;
         let headNode = this.head;
         let current = headNode.next;
-        let status = callback(headNode.value);
+        let status = headNode.id === id;
         if(head) {
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(status) {
-<span class="cstat-no" title="statement not covered" >                node.next = headNode;</span>
+            if(status) {
+            <span class="missing-if-branch" title="if path not taken" >I</span>    node.next = headNode;
 <span class="cstat-no" title="statement not covered" >                this.head = node;</span>
 <span class="cstat-no" title="statement not covered" >                return this.head;</span>
-            }
+            }<span class="cstat-no" title="statement not covered" ></span>
             while(!status &amp;&amp; current) {
-                status = callback(current.value);
-                <span class="missing-if-branch" title="if path not taken" >I</span>if(!status) {
-<span class="cstat-no" title="statement not covered" >                    headNode = current;</span>
-<span class="cstat-no" title="statement not covered" >                    current = current.next;</span>
-                }
+                status = current.id === id;
+                if(!status) {
+                <span class="missing-if-branch" title="if path not taken" >I</span>    headNode = current;
+<span class="cstat-no" title="statement not covered" >                    current = current.ne</span>xt;
+                }<span class="cstat-no" title="statement not covered" ></span>
             }
-            <span class="missing-if-branch" title="else path not taken" >E</span>if(status &amp;&amp; current) {
-                node.next = current;
+            if(status &amp;&amp; current) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>    node.next = current;
                 headNode.next = node;
             }  
             return this.head;
         } else {
             if(status) {
-            <span class="missing-if-branch" title="else path not taken" >E</span>    node.next = current;
-                headNode.next = node;
+                node.next = current;
+            <span class="missing-if-branch" title="else path not taken" >E</span>    headNode.next = node;
                 return this.head;
             }
             while(!status &amp;&amp; current) {
-<span class="cstat-no" title="statement not covered" >                status = callback(current.value);</span>
+                status = current.id === id;
 <span class="cstat-no" title="statement not covered" >                if(!status) {</span>
 <span class="cstat-no" title="statement not covered" >                    headNode = current;</span>
-<span class="cstat-no" title="statement not covered" >                    current = current.ne</span>xt;
+<span class="cstat-no" title="statement not covered" >                    current = current.next;</span>
                 }<span class="cstat-no" title="statement not covered" ></span>
-            }
+            }<span class="cstat-no" title="statement not covered" ></span>
             if(status &amp;&amp; current) {
-<span class="cstat-no" title="statement not covered" >                headNode = current;</span>
-<span class="cstat-no" title="statement not covered" >                current = current.ne</span>xt;
-<span class="cstat-no" title="statement not covered" >                headNode.next = node;</span>
+                headNode = current;
+<span class="cstat-no" title="statement not covered" >                current = current.next;</span>
+<span class="cstat-no" title="statement not covered" >                headNode.next = node</span>;
 <span class="cstat-no" title="statement not covered" >                node.next = current;</span>
             }  <span class="cstat-no" title="statement not covered" ></span>
-            return this.head;
-        }<span class="cstat-no" title="statement not covered" ></span>
-    }
-    remove(callback:(v:V) =&gt; boolean) {
+            retu<span class="cstat-no" title="statement not covered" >rn this.head;</span>
+        }
+    }<span class="cstat-no" title="statement not covered" ></span>
+    remove(id: string | number) {
         let head = this.head;
         let current = head.next;
-        let status = callback(head.value);
+        let status = head.id === id;
         if(status) {
-        <span class="missing-if-branch" title="if path not taken" >I</span>    this.head = this.head.next;
-<span class="cstat-no" title="statement not covered" >            return this.head;</span>
+            this.head = this.head.next;
+        <span class="missing-if-branch" title="if path not taken" >I</span>    return this.head;
         }<span class="cstat-no" title="statement not covered" ></span>
-        while(!status &amp;&amp; current) {
-            status = callback(current.value);
+        whil<span class="cstat-no" title="statement not covered" >e(!status &amp;&amp; curre</span>nt) {
+            status = current.id === id;
             if(!status) {
                 head = current;
                 current = current.next;
             }
         }
         if(status &amp;&amp; current) {
-        <span class="missing-if-branch" title="else path not taken" >E</span>    current = current.next;
-            head.next = current;
+            current = current.next;
+        <span class="missing-if-branch" title="else path not taken" >E</span>    head.next = current;
         }
         return this.head;
     }
-    get(callback: (value: V) =&gt; boolean) {
+    get(id: string | number) {
         let node = this.head;
         let status = false
         while(!status &amp;&amp; node) {
-            status = callback(node.value);
+            status = node.id === id;
             if(!status) {
                 node = node.next;
             }
@@ -448,7 +430,7 @@ export default class LinkNode&lt;V = any&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-06-09T10:09:13.076Z
+                at 2023-06-09T10:37:48.177Z
             </div>
         <script src="prettify.js"></script>
         <script>

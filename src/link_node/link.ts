@@ -1,25 +1,19 @@
+import { LinkNode } from "./node";
 
-class Node<V = any> {
-    constructor(value: V) {
-        this.value = value;
-    }
-    value: V;
-    next?: Node;
-}
 
-export default class LinkNode<V = any> {
-    constructor(value: V) {
-        this.head = new Node(value);
+export default class Link<V = any> {
+    constructor(id: string | number,value: V) {
+        this.head = new LinkNode(id, value);
     }
-    head: Node<V>;
+    head: LinkNode<V>;
 
     /**
      * 插入
      * @param value 值
      * @param head 是否头插入
      */
-    insert(value: V, head = false) {
-        const node = new Node(value);
+    insert(value: LinkNode, head = false) {
+        const node = value;
         if(head) {
             node.next = this.head;
             this.head = node;
@@ -44,11 +38,11 @@ export default class LinkNode<V = any> {
      * @param head 
      * @returns 
      */
-    nodeInsert(value:V, callback: (v: V) => boolean, head = false) {
-        const node = new Node(value);
+    nodeInsert(id: string | number, value:LinkNode,head = false) {
+        const node = value;
         let headNode = this.head;
         let current = headNode.next;
-        let status = callback(headNode.value);
+        let status = headNode.id === id;
         if(head) {
             if(status) {
                 node.next = headNode;
@@ -56,7 +50,7 @@ export default class LinkNode<V = any> {
                 return this.head;
             }
             while(!status && current) {
-                status = callback(current.value);
+                status = current.id === id;
                 if(!status) {
                     headNode = current;
                     current = current.next;
@@ -74,7 +68,7 @@ export default class LinkNode<V = any> {
                 return this.head;
             }
             while(!status && current) {
-                status = callback(current.value);
+                status = current.id === id;
                 if(!status) {
                     headNode = current;
                     current = current.next;
@@ -89,16 +83,16 @@ export default class LinkNode<V = any> {
             return this.head;
         }
     }
-    remove(callback:(v:V) => boolean) {
+    remove(id: string | number) {
         let head = this.head;
         let current = head.next;
-        let status = callback(head.value);
+        let status = head.id === id;
         if(status) {
             this.head = this.head.next;
             return this.head;
         }
         while(!status && current) {
-            status = callback(current.value);
+            status = current.id === id;
             if(!status) {
                 head = current;
                 current = current.next;
@@ -110,11 +104,11 @@ export default class LinkNode<V = any> {
         }
         return this.head;
     }
-    get(callback: (value: V) => boolean) {
+    get(id: string | number) {
         let node = this.head;
         let status = false
         while(!status && node) {
-            status = callback(node.value);
+            status = node.id === id;
             if(!status) {
                 node = node.next;
             }
