@@ -1,12 +1,9 @@
 export * from './interface';
 export * from './type';
-export * from './platform';
 export * from './array';
 export * from './set';
 export * from './delay';
-export * from './dom/interface';
 export * as log from './log';
 export * as color from './color';
-export * as dom from './dom';
 export * as query from './query';
 export * as transform from './transform';

@@ -14,9 +14,34 @@ defaults:
 
 # 任务，定义个changelog 的任务
 jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # 设置 pnpm。指定版本7.0，不然会报错
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2.2.1
+        with:
+          version: ^7.0
+
+      # 设置 Node
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+      # 安装依赖
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Package Test
+        run: pnpm run test
+
   changelog:
     name: Changelog PR or Release
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - uses: actions/checkout@v3
       # 设置 pnpm。指定版本7.0，不然会报错
