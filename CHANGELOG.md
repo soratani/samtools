@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.7
+
+### Patch Changes
+
+- 502ea25: 新增链表
+
 ## 1.2.6
 
 ### Patch Changes
