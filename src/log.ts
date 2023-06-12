@@ -4,6 +4,6 @@ export function log(label: string, message: string) {
 
 export function error(label: string, ...message: any) {
   console.groupCollapsed(`%c ERROR:[${label}]`, 'background:#eb1168;color:#fff;border-radius: 4px; padding: 2px 4px;');
-  console.log(...message);
+  console.log(message);
   console.groupEnd();
 }
