@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.8
+
+### Patch Changes
+
+- a195961: 问题修复
+
 ## 1.2.7
 
 ### Patch Changes
