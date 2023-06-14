@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.10
+
+### Patch Changes
+
+- dbbb437: log 字体颜色
+
 ## 1.2.9
 
 ### Patch Changes
