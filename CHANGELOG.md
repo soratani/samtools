@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.11
+
+### Patch Changes
+
+- 89d2b8c: 兼容
+
 ## 1.2.10
 
 ### Patch Changes
