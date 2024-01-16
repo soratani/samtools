@@ -13,15 +13,11 @@ export function get<D = any>(data: any, id: string, defaultData?: D): D {
     if (!id || !data) return defaultData;
     let keys = id.replace(/[{}\[\]()]/g, '.').split('.').filter(Boolean);
     let node = data;
-    let result = null;
-    while(keys.length && isNull(result)) {
+    while(keys.length && !isNull(node) && !isUndefined(node)) {
         const key = keys.shift();
-        node = data[key];
-        if (isUndefined(node) || isNull(node)) {
-            result = defaultData;
-        }
+        node = node[key];
     }
-    return result;
+    return node || defaultData;
 }
 
 export function pick<D extends object, T extends keyof D>(data: D, keys: PickKeys<T> = []): Pick<D, T> {
