@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "target": "ES5",
+        "target": "es2015",
         "types": ["jest", "jest-enzyme"],
         "allowJs": true,
         "skipLibCheck": false,

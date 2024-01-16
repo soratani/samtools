@@ -1,10 +1,21 @@
+import { isObject, isString } from "./type";
 
 /**
  * 数组去重
  * @param array 
  * @returns 
  */
-export function unrepetition<D = any>(array: D[]) {
+export function unrepetition<D = any>(array: D[], index?: string): D[] {
+    if (isString(index)) {
+        const maps = array.filter(item => isObject(item));
+        if (maps.length) {
+            const keys = unrepetition(maps.map(item => item[index]).filter(Boolean));
+            return keys.reduce((a: D[], b: string, idx: number) => {
+                const item = maps.find(item => item[index] === b);
+                return a.concat([item]);
+            }, []);
+        }
+    }
     return [...new Set(array)];
 }
 
