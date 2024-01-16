@@ -4,6 +4,7 @@
   "description": "",
   "typings": "lib/index.d.ts",
   "main": "lib/index.js",
+  "private":"false",
   "files": [
     "lib"
   ],
@@ -12,7 +13,7 @@
     "access": "public"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --verbose",
     "build": "rm -rf lib && tsc -p ./tsconfig.json",
     "changeset": "changeset",
     "version": "changeset version && pnpm install"
@@ -24,9 +25,9 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Lauweal/issues"
+    "url": "https://github.com/soratani/samtools/issues"
   },
-  "homepage": "https://github.com/Lauweal#readme",
+  "homepage": "https://github.com/soratani/samtools#readme",
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
     "@types/enzyme": "^3.10.13",

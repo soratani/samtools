@@ -87,9 +87,9 @@ export function type(value: any): BaseType {
 }
 
 export function isEmpty(value: any) {
+    if (isUndefined(value) || isNull(value)) return false;
     if (isArray(value)) return !value.length;
     if (isObject(value)) return !Object.keys(value).length;
-    if (isUndefined(value) || isNull(value)) return true;
     if (isString(value)) return !value;
     return false;
 }
