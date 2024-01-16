@@ -12,7 +12,8 @@
     "sourceMap": false,
     "outDir": "./lib",
     "rootDir": "./src",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "lib": ["ES2017", "DOM"]
   },
   "exclude": ["node_modules", "jest.config.ts", "**/*.test.ts"]
 }
