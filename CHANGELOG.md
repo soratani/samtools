@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.2.15
+
+### Patch Changes
+
+- 0ce55a8: 1.2.15
+
 ## 1.2.14
 
 ### Patch Changes
