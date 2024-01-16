@@ -1,23 +1,23 @@
 import { isPromise } from "./type";
 
 interface Curry<T extends any[], R> {
-  (...args: T): R
+  (...args: T): R | Promise<R>
 }
 
 export function delay<T extends any[], R>(fun: Curry<T, R>, timer = 1000): Curry<T, R> {
   return (...args: T) => {
-    const data = fun(...args);
-    if (isPromise(data)) {
-      const task = new Promise((resolve, reject) => {
-        let time: any = setTimeout(() => {
-          
+    const task = new Promise<R>((resolve, reject) => {
+      let time: any = setTimeout(() => {
+        const data = fun(...args);
+        if (isPromise(data)) {
           data.then(resolve).catch(reject);
-          clearTimeout(time);
-          time = undefined;
-        }, timer);
-      }) as unknown as R;
-      return task;
-    }
-    return data;
+        } else {
+          resolve(data);
+        }
+        clearTimeout(time);
+        time = undefined;
+      }, timer);
+    }) as unknown as R;
+    return task;
   };
 }
