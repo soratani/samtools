@@ -1,10 +1,11 @@
 import { isObject, isEmpty, isString } from ".";
 
-export function make(obj: string): string {
+export function make(obj: any): string {
     if (!isObject(obj) || isEmpty(obj)) return "";
     return Object.entries(obj).reduce((a, b, idx) => {
         const [key, value] = b;
-        if (!idx) return `${a}?${key}=${value}`;
+        if(isEmpty(value)) return a;
+        if (!idx) return `${a}?${key}=${encodeURIComponent(value as any)}`;
         return `${a}&${key}=${value}`;
     }, "")
 }
