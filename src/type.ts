@@ -49,7 +49,7 @@ export function isSymbol(sbl: any): sbl is symbol {
 }
 
 export function isNum(num: any): num is number {
-    return Object.prototype.toString.call(num) === '[object Number]'
+    return Object.prototype.toString.call(num) === '[object Number]' && !isNaN(num);
 }
 
 export function isDate(date: any): date is Date {

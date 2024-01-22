@@ -1,57 +1,72 @@
-import platform from 'platform';
-import { isNum } from '.';
-export type System =
-    "OS X" |
-    "Windows" |
-    "Linux" |
-    "Android" |
-    "Windows Server 2008 R2 / 7" |
-    "Windows Server 2008 / Vista" |
-    "Windows XP" |
-    "Ubuntu" |
-    "iOS" |
-    "Windows Phone" |
-    "Debian";
+import { get } from "./database";
 
-interface IUserAgent {
-    system: System;
-    version: string;
-    name: string;
-}
+type System = 'windows' | 'mac' | 'linux' | 'android' | 'ios' | 'blackberry' | 'symbian' | 'webos' | 'unknown' | 'windows-phone';
 
-export function isMobile() {
-    const info = userAgent();
-    return ["iOS", "Windows Phone", "Android"].includes(info.system);
-}
+const system_map: Record<string, System> = {
+    'Windows': 'windows',
+    'Macintosh': 'mac',
+    'Linux': 'linux',
+    'Android': 'android',
+    'iPhone': 'ios',
+    'iPad': 'ios',
+    'BlackBerry': 'blackberry',
+    'BB10': 'blackberry',
+    'SymbianOS': 'symbian',
+    'Windows Phone': 'windows-phone',
+    'webOS': 'webos',
+};
 
-export function userAgent(): IUserAgent {
-    return {
-        system: (platform.os as any).family as System,
-        version: (platform.os as any).version as string,
-        name: platform.name as any
+function macVersion(useragent = navigator.userAgent) {
+    const rule = /Mac OS X ([\d._]+)/;
+    const match = get(rule.exec(useragent), '1');
+    if (match) {
+        const version = match.replace(/_/g, '.').replace(/\./g, ',').split(',').join('.');
+        return version || 'unknown';
     }
+    return 'unknown';
 }
 
-function division(arg1: number, arg2: number | string) {
-    if (!isNum(arg1) || !isNum(arg2 as number)) return "";
-    let t1 = 0,
-        t2 = 0,
-        r1,
-        r2
-    try {
-        t1 = arg1.toString().split('.')[1].length
-    } catch (e) { }
-    try {
-        t2 = arg2.toString().split('.')[1].length
-    } catch (e) { }
-    r1 = Number(arg1.toString().replace('.', ''));
-    r2 = Number(arg2.toString().replace('.', ''));
-    return (r1 / r2) * Math.pow(10, t2 - t1)
+function windowsVersion(useragent = navigator.userAgent) {
+    const rule = /Windows NT(\d+\.\d+)/i;
+    const match = get(rule.exec(useragent), '1');
+    return match || 'unknown';
 }
 
-export function transitionPxToVw(px: string, vwwidth: number) {
+function windowsPhoneVersion(useragent = navigator.userAgent) {
+    const rule = /Windows Phone(\d+\.\d+)/i;
+    const match = get(rule.exec(useragent), '1');
+    return match || 'unknown';
+}
 
-    if (isNum(px as any)) return '0';
-    const vw = division(parseInt(px.split('px')[0]), division(vwwidth, 100));
-    return `${vw}vw`;
+function androidVersion(useragent = navigator.userAgent) {
+    const rule = /Android (\d+(\.\d+)+(\.\d+)?)/i;
+    const match = get(rule.exec(useragent), '1');
+    return match || 'unknown';
+}
+
+function iosVersion(useragent = navigator.userAgent) {
+    const rule = /CPU( iPhone)? OS (\d+)_(\d+)(?:_\d+)? like Mac OS X/i;
+    const match_major = get(rule.exec(useragent), '2');
+    const match_minor = get(rule.exec(useragent), '3');
+    if (match_major && match_minor) {
+        return `${parseInt(match_major)}.${parseInt(match_minor)}`;
+    }
+    return 'unknown';
+}
+
+export function system(useragent = navigator.userAgent): System {
+    const rule = /(Windows|Macintosh|Android|iPhone|iPad|iPod|BlackBerry|BB10|SymbianOS|Windows Phone|webOS)/i;
+    const match = get(rule.exec(useragent), '1');
+    if (match && system_map[match]) return system_map[match]
+    return 'unknown';
+}
+
+export function version(useragent = navigator.userAgent) {
+    const sys = system(useragent);
+    if (sys === 'windows') return windowsVersion(useragent);
+    if (sys === 'windows-phone') return windowsPhoneVersion(useragent)
+    if (sys === 'mac') return macVersion(useragent);
+    if (sys === 'android') return androidVersion(useragent);
+    if (sys === 'ios') return iosVersion(useragent);
+    return 'unknown';
 }

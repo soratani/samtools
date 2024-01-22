@@ -1,6 +1,42 @@
 import { isNull, isObject, isUndefined } from "./type";
 
-type PickKeys<T = any> = T[]; 
+type PickKeys<T = any> = T[];
+
+type GetIndexedField<T, K> = K extends keyof T
+? T[K]
+: K extends `${number}`
+    ? 'length' extends keyof T
+        ? number extends T['length']
+            ? number extends keyof T
+                ? T[number]
+                : undefined
+            : undefined
+        : undefined
+    : undefined;
+
+type FieldWithPossiblyUndefined<T, Key> =
+| GetFieldType<Exclude<T, undefined>, Key>
+| Extract<T, undefined>;
+
+type IndexedFieldWithPossiblyUndefined<T, Key> =
+| GetIndexedField<Exclude<T, undefined>, Key>
+| Extract<T, undefined>;
+
+type GetFieldType<T, P> = P extends `${infer Left}.${infer Right}`
+? Left extends keyof Exclude<T, undefined>
+    ? FieldWithPossiblyUndefined<Exclude<T, undefined>[Left], Right> | Extract<T, undefined>
+    : Left extends `${infer FieldKey}[${infer IndexKey}]`
+        ? FieldKey extends keyof T
+            ? FieldWithPossiblyUndefined<IndexedFieldWithPossiblyUndefined<T[FieldKey], IndexKey>, Right>
+            : undefined
+        : undefined
+: P extends keyof T
+    ? T[P]
+    : P extends `${infer FieldKey}[${infer IndexKey}]`
+        ? FieldKey extends keyof T
+            ? IndexedFieldWithPossiblyUndefined<T[FieldKey], IndexKey>
+            : undefined
+        : IndexedFieldWithPossiblyUndefined<T, P>;
 
 /**
  * 获取数据信息
@@ -9,7 +45,7 @@ type PickKeys<T = any> = T[];
  * @param defaultData 
  * @returns 
  */
-export function get<D = any>(data: any, id: string, defaultData?: D): D {
+export function get<TObject, TPath extends string, TDefault = GetFieldType<TObject, TPath>>(data: TObject, id: TPath, defaultData?: TDefault): Exclude<GetFieldType<TObject, TPath>, null | undefined> | TDefault {
     if (!id || !data) return defaultData;
     let keys = id.replace(/[{}\[\]()]/g, '.').split('.').filter(Boolean);
     let node = data;
@@ -17,7 +53,7 @@ export function get<D = any>(data: any, id: string, defaultData?: D): D {
         const key = keys.shift();
         node = node[key];
     }
-    return node || defaultData;
+    return (node || defaultData) as Exclude<GetFieldType<TObject, TPath>, null | undefined> | TDefault;
 }
 
 export function pick<D extends object, T extends keyof D>(data: D, keys: PickKeys<T> = []): Pick<D, T> {
