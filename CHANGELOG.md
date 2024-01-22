@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.0
+
+### Minor Changes
+
+- 0593b28: 1.3.0
+
 ## 1.2.15
 
 ### Patch Changes
