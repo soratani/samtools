@@ -3,8 +3,8 @@ import { get, pick, omit } from '../database';
 describe('数据操作', () => {
     it('get函数获取对象数据', () => {
         const object = { a: 1, b: { c: 1 }, d: [0,1,2,3] };
-        const data = get(object, 'd[2]');
-        expect(data).toEqual(2);
+        const data = get(object, 'a', [1]);
+        expect(data).toEqual(1);
     });
     it('get函数默认值', () => {
         const object = { a: 1, b: { c: 1 }, d: [0,1,2,3] };

@@ -2,6 +2,7 @@ export * from './interface';
 export * from './type';
 export * from './delay';
 export * from './database';
+export * as platform from './platform';
 export * as set from './set';
 export * as log from './log';
 export * as color from './color';
