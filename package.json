@@ -13,8 +13,9 @@
   },
   "scripts": {
     "test": "jest --verbose",
-    "build:lib": "rollup --config rollup.config.js && rm -rf dist/lib",
-    "build": "rm -rf lib && tsc -p ./tsconfig.json",
+    "build": "pnpm run build:lib && pnpm run build:dist",
+    "build:dist": "rollup --config rollup.config.js && rm -rf dist/lib",
+    "build:lib": "rm -rf lib && tsc -p ./tsconfig.json",
     "changeset": "changeset",
     "version": "changeset version && pnpm install"
   },
