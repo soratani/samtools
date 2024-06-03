@@ -9,3 +9,4 @@ export * as log from "./log";
 export * as color from "./color";
 export * as query from "./query";
 export * as transform from "./transform";
+export { default as Graph } from "./graph";
