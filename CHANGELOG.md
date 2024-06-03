@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.1
+
+### Patch Changes
+
+- fe43b98: 1.3.1
+
 ## 1.3.0
 
 ### Minor Changes
