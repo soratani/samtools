@@ -24,7 +24,6 @@ describe('系统信息获取测试', () => {
     it('windows获取系统版本', () => {
         const useAgent = 'Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; Microsoft; Lumia 550) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Mobile Safari/537.36 Edge/14.14263';
         const _version = version(useAgent);
-        console.log(_version)
         expect(_version).toEqual('unknown');
     })
 })
