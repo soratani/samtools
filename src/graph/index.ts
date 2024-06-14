@@ -33,7 +33,6 @@ export default class Graph {
     distances[target] = 0;
     while (queue.length > 0) {
       queue.sort((a, b) => distances[a] - distances[b]);
-      console.log(">>>>>", queue);
       const closest = queue.shift();
       if (visited[closest]) continue;
       visited[closest] = true;
