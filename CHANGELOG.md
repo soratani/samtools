@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.2
+
+### Patch Changes
+
+- 8c17b83: 1.3.2
+
 ## 1.3.1
 
 ### Patch Changes
