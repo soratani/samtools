@@ -2,6 +2,8 @@
  * { data-analysis:  ['read', 'write'] }
  */
 
+import { every, filter, find, get, map, reduce } from "lodash";
+
 export type UserPermission = Record<string, number[]>;
 
 type Auth = {
@@ -39,6 +41,56 @@ const auth = (params: Auth, userPermission: UserPermission) => {
     const perm = userPermission[resource];
     return judge(actions, perm);
 };
+
+function reversePermissionBinary(code: string) {
+    return code.split('').reverse().join('');
+}
+
+function binary(num: number) {
+    return num.toString(2);
+}
+
+export function filterPermission(code: number, permissions: number[]) {
+    const bina = binary(code);
+    function diff(target: number, source: number) {
+        return target && target == source || !source;
+    }
+    function equality(target: string, source: string) {
+        const tar = reversePermissionBinary(target);
+        const sou = reversePermissionBinary(source);
+        return every(sou, (i, index) => diff(Number(tar[index]), Number(i)));
+    }
+    return filter(permissions, (i) => equality(bina, binary(i)));
+}
+
+/**
+ * 合并权限
+ * @param nums
+ */
+export function perm(...nums:number[]) {
+    return reduce(nums, (pre, n) => pre | n, 0);
+}
+
+/**
+ * 计算权限
+ * @param resources 
+ * @param permissions 
+ * @returns 
+ */
+export function permissionCompute(resources: Record<string, number>, permissions: Record<string, number>) {
+    const permValues = Object.values(resources);
+    const resources_maps = Object.entries(resources);
+    const permissions_maps = Object.entries(permissions);
+    return reduce<[string, number], Record<string, string[]>>(permissions_maps, (pre, item) => {
+        const [key, code] = item;
+        pre[key] = map(filterPermission(code, permValues), (i) => {
+            const item = find(resources_maps, o => o[1] === i);
+            const perm = get(item, '0');
+            return perm;
+        }).filter(Boolean);
+        return pre;
+    }, {});
+}
 
 export function permission(params: AuthParams, userPermission: UserPermission) {
     const { requiredPermissions, oneOfPerm } = params;
