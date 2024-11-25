@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.4
+
+### Patch Changes
+
+- ab1d939: 1.3.4
+
 ## 1.3.3
 
 ### Patch Changes
