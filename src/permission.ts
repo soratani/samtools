@@ -2,11 +2,11 @@
  * { data-analysis:  ['read', 'write'] }
  */
 
-export type UserPermission = Record<string, string[]>;
+export type UserPermission = Record<string, number[]>;
 
 type Auth = {
     resource: string | RegExp;
-    actions?: string[];
+    actions?: number[];
 };
 
 export interface AuthParams {
@@ -14,13 +14,9 @@ export interface AuthParams {
     oneOfPerm?: boolean;
 }
 
-const judge = (actions: string[], perm: string[]) => {
+const judge = (actions: number[], perm: number[]) => {
     if (!perm || !perm.length) {
         return false;
-    }
-
-    if (perm.join('') === '*') {
-        return true;
     }
 
     return actions.every((action) => perm.includes(action));
