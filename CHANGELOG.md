@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.6
+
+### Patch Changes
+
+- 0a9895b: 树转数组
+
 ## 1.3.5
 
 ### Patch Changes
