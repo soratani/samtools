@@ -1,4 +1,4 @@
-import { cloneDeep, filter, get, isArray, omit } from "lodash";
+import { cloneDeep, get, isArray, omit } from "lodash";
 
 export function findNodeFormKey<D = any>(key: string, nodes: D[], id: string) {
   if (!id) return undefined;
@@ -41,13 +41,15 @@ export function deleteNodeFormKey<D = any>(key: string, nodes: D[], id: string) 
   while (queue.length > 0) {
     const node = queue.shift() as any;
     if (node[key] === id) {
-      return null;
+      return [];
     }
     if (isArray(node.children)) {
       const newChildren = [];
-      const result = deleteNodeFormKey(key, node.children, id);
-      if (result) {
-        newChildren.push(...result);
+      for (let child of node.children) {
+        const result = deleteNodeFormKey(key,[child], id);
+        if (result.length) {
+          newChildren.push(...result);
+        }
       }
       node.children = newChildren;
     }
