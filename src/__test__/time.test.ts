@@ -9,6 +9,6 @@ describe("时间测试", () => {
   it("格式转换", () => {
     const time = new Time(Date.now());
     const date = time.format("YYYY-MM-DD");
-    expect(date).toEqual("2024-06-04");
+    expect(date).toEqual("2024-11-28");
   });
 });

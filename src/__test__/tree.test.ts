@@ -1,4 +1,4 @@
-import { toList } from '../tree';
+import { toList, deleteNodeFormKey } from '../tree';
 
 describe('树功能测试', () => {
     it('转数组', () => {
@@ -34,5 +34,5 @@ describe('树功能测试', () => {
         ];
         const list = toList(test);
         expect(list).toEqual(res);
-    })
+    });
 })
