@@ -45,11 +45,9 @@ export function deleteNodeFormKey<D = any>(key: string, nodes: D[], id: string) 
     }
     if (isArray(node.children)) {
       const newChildren = [];
-      for (let child of node.children) {
-        const result = deleteNodeFormKey(key, [child], id);
-        if (result) {
-          newChildren.push(result);
-        }
+      const result = deleteNodeFormKey(key, node.children, id);
+      if (result) {
+        newChildren.push(...result);
       }
       node.children = newChildren;
     }
