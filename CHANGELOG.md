@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.9
+
+### Patch Changes
+
+- 63b9fa4: 删除节点
+
 ## 1.3.8
 
 ### Patch Changes
