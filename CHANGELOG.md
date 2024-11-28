@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.7
+
+### Patch Changes
+
+- 480806d: 树删除节点
+
 ## 1.3.6
 
 ### Patch Changes
