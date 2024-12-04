@@ -92,6 +92,23 @@ export function permissionCompute(resources: Record<string, number>, permissions
     }, {});
 }
 
+/**
+ * 计算当前用户的权限
+ * @param permissions 
+ * @param allPermissions 
+ * @returns 
+ */
+export function computeUserPermission(permissions: Record<string, number>, allPermissions: Record<string, number[]>) {
+    const allKeys = Object.keys(allPermissions);
+    const keys = Object.keys(permissions);
+    return reduce<string, Record<string, number[]>>(allKeys, (pre, key) => {
+        if (keys.includes(key)) {
+            pre[key] = filterPermission(permissions[key], allPermissions[key]);
+        }
+        return pre;
+    }, {})
+}
+
 export function permission(params: AuthParams, userPermission: UserPermission) {
     const { requiredPermissions, oneOfPerm } = params;
     if (Array.isArray(requiredPermissions) && requiredPermissions.length) {
