@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.10
+
+### Patch Changes
+
+- ef82f19: 1.3.10
+
 ## 1.3.9
 
 ### Patch Changes
