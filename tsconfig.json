@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "strict": true,
     "module": "commonjs",
     "declaration": true,
     "noImplicitAny": false,
@@ -13,7 +14,8 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "skipLibCheck": true,
-    "lib": ["ES2017", "DOM"]
+    "lib": ["ES2017", "DOM"],
+    "forceConsistentCasingInFileNames":true,
   },
-  "exclude": ["node_modules", "jest.config.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "lib", "jest.config.ts", "**/*.test.ts"]
 }
