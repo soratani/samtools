@@ -79,10 +79,11 @@ export function conversMenusPath<D = any, P = string, C = string>(data: D[], key
   return map(data, (item: any) => {
     const clone = cloneDeep(item);
     const children = get(clone, child as string, []);
-    const path = filter([prefix, ...item[key].split('/')], Boolean).join('/');
-    clone[key] = path;
+    const mergePath = filter([prefix, item[key]], Boolean).join('/')
+    const path = filter(mergePath.split('/'), Boolean).join('/');
+    clone[key] = path.startsWith('/') ? path : `/${path}`;
     if (children.length) {
-      clone[child] = conversMenusPath(children, key, child, path);
+      clone[child] = conversMenusPath(children, key, child, clone[key]);
     }
     return clone;
   })
