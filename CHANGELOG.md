@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.12
+
+### Patch Changes
+
+- 1704899: 菜单前缀转换
+
 ## 1.3.11
 
 ### Patch Changes
