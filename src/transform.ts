@@ -1,5 +1,6 @@
+import { map, reduce } from 'lodash';
 import { ListToTreeSchema, TreeChildren } from '.';
-import { isArray, isEmpty, isNum, isObject } from './type';
+import { isArray, isEmpty, isNull, isNum, isObject, isUndefined } from './type';
 
 function schemaToObj(obj: any, schema?: ListToTreeSchema) {
   if (!isObject(obj) || !schema || !isObject(schema) || isEmpty(schema)) return obj;
@@ -46,3 +47,25 @@ export function enumToOptions(params: any = {}) {
   }, [])
 }
 
+export function isNotEmpty(data: any) {
+  if(isEmpty(data)) return data;
+  if(isObject(data)) {
+    return reduce(Object.keys(data), (pre, key) => {
+      if (isUndefined(data[key]) || isNull(data[key])) return pre;
+      if(isObject(data[key]) || isArray(data[key])) {
+        pre[key] = isNotEmpty(data[key]);
+      } else if (!isEmpty(data[key])) {
+        pre[key] = data[key];
+      } else {
+        return pre;
+      }
+    }, {});
+  }
+  if (isArray(data)) {
+    return map(data, (item) => {
+      if (isObject(item) || isArray(item)) return isNotEmpty(item);
+      return item;
+    })
+  }
+  return data;
+}
