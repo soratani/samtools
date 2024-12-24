@@ -1,4 +1,4 @@
-import { map, reduce } from 'lodash';
+import { cloneDeep, filter, get, map, reduce } from 'lodash';
 import { ListToTreeSchema, TreeChildren } from '.';
 import { isArray, isEmpty, isNull, isNum, isObject, isUndefined } from './type';
 
@@ -15,14 +15,18 @@ function schemaToObj(obj: any, schema?: ListToTreeSchema) {
   }, {});
 }
 
-export function listToTree<P = any, I = "id", PI = "parentId">(
+export function listToTree<P = any, I = string, PI = string>(
   list: P[],
   id: I,
   parentId: PI,
   value: any,
   schema?: ListToTreeSchema,
 ): TreeChildren<P>[] {
-  const root = list.filter((l: any) => l[parentId] == value);
+  if (!list || !list.length) return [];
+  const root = list.filter((l: any) => {
+    if (!value) return !l[parentId];
+    return l[parentId] == value;
+  });
   const childrens = list.filter((l: any) => l[parentId] !== value);
   return root.map((r: any) => {
     return {
@@ -36,7 +40,7 @@ export function enumToList<K = number, V = string>(params: any): [K, V][] {
   if (isEmpty(params)) return [];
   const list: [K, V][] = [];
   for (const key in params) {
-    if (isNum(params[key])) list.push([params[key], key as any]);
+    if (isNum(params[key])) list.push([params[key] as any, key as any]);
   }
   return list;
 }
@@ -68,4 +72,18 @@ export function isNotEmpty(data: any) {
     })
   }
   return data;
+}
+
+export function conversMenusPath<D = any, P = string, C = string>(data: D[], key: P, child: C, prefix?: string) {
+  if (!data || !data.length) return data;
+  return map(data, (item: any) => {
+    const clone = cloneDeep(item);
+    const children = get(clone, child as string, []);
+    const path = filter([prefix, ...item[key].split('/')], Boolean).join('/');
+    clone[key] = path;
+    if (children.length) {
+      clone[child] = conversMenusPath(children, key, child, path);
+    }
+    return clone;
+  })
 }

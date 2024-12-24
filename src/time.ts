@@ -12,6 +12,8 @@ type FormatType =
   | "YYYY/MM/DD HH"
   | "DD/MM/YYYY HH";
 
+type DiffType = 'day' | 'hour' | 'minute' | 'second';
+
 export class Time {
   private static types = [
     "YYYY-MM-DD",
@@ -75,6 +77,23 @@ export class Time {
         return this[item]();
       })
       .join(sep);
+  }
+
+  public timestamp() {
+    return this.data.getTime();
+  }
+
+  public diff(time: Time, type: DiffType) {
+    const num = time.timestamp() - this.timestamp();
+    if (type === 'day') {
+      return Math.floor(num / (1000 * 60 * 60 * 24))
+    } else if (type === 'hour') {
+      return Math.floor((num % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    } else if (type === 'minute') {
+      return Math.floor((num % (1000 * 60 * 60)) / (1000 * 60));
+    } else {
+      return Math.floor((num % (1000 * 60)) / 1000);
+    }
   }
 
   public format(type: FormatType) {
