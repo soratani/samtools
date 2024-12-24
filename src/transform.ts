@@ -60,9 +60,8 @@ export function isNotEmpty(data: any) {
         pre[key] = isNotEmpty(data[key]);
       } else if (!isEmpty(data[key])) {
         pre[key] = data[key];
-      } else {
-        return pre;
       }
+      return pre;
     }, {});
   }
   if (isArray(data)) {
