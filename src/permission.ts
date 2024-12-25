@@ -3,12 +3,13 @@
  */
 
 import { every, filter, find, get, map, reduce } from "lodash";
+import { isString } from "./type";
 
-export type UserPermission = Record<string, number[]>;
+export type UserPermission = Record<string, (number | string)[]>;
 
 type Auth = {
     resource: string | RegExp;
-    actions?: number[];
+    actions?: (number | string)[];
 };
 
 export interface AuthParams {
@@ -16,11 +17,14 @@ export interface AuthParams {
     oneOfPerm?: boolean;
 }
 
-const judge = (actions: number[], perm: number[]) => {
+const judge = (actions: (number | string)[], perm: (number | string)[]) => {
     if (!perm || !perm.length) {
         return false;
     }
-
+    const isStr = perm.every((item) => isString(item));
+    if (isStr && perm.join('') === '*') {
+        return true;
+    }
     return actions.every((action) => perm.includes(action));
 };
 
@@ -77,11 +81,11 @@ export function perm(...nums:number[]) {
  * @param permissions 
  * @returns 
  */
-export function permissionCompute(resources: Record<string, number>, permissions: Record<string, number>) {
+export function permissionCompute(resources: Record<string, number>, permissions: Record<string, number>): Record<string, string[]> {
     const permValues = Object.values(resources);
     const resources_maps = Object.entries(resources);
     const permissions_maps = Object.entries(permissions);
-    return reduce<[string, number], Record<string, string[]>>(permissions_maps, (pre, item) => {
+    return reduce(permissions_maps, (pre, item) => {
         const [key, code] = item;
         pre[key] = map(filterPermission(code, permValues), (i) => {
             const item = find(resources_maps, o => o[1] === i);
