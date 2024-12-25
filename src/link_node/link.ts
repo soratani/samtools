@@ -93,7 +93,7 @@ export default class Link<V = any> {
     let current = head.next;
     let status = head.id === id;
     if (status) {
-      this.head = this.head.next;
+      this.head = this.head.next as any;
       return this.head;
     }
     while (!status && current) {
@@ -120,7 +120,7 @@ export default class Link<V = any> {
     while (!status && node) {
       status = node.id === id;
       if (!status) {
-        node = node.next;
+        node = node.next as any;
       }
     }
     if (status && node) {

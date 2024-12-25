@@ -116,7 +116,7 @@ export function opacity(code: string, num?: number): string {
       }
       _color = colorNew;
     }
-    var colorChange = [];
+    var colorChange: any[] = [];
     for (var j = 1; j < 7; j += 2) {
       colorChange.push(parseInt('0x' + _color.slice(j, j + 2)));
     }

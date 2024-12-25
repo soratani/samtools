@@ -25,7 +25,7 @@ export function updateNodeFormKey<D = any>(key: string, nodes: D[], id: string, 
     const node = queue.shift() as D;
     const children = get(node, 'children', []) as D[];
     if (node[key] === id) {
-      Object.assign(node, value);
+      Object.assign(node as any, value);
       return tree;
     }
     if (children.length > 0) {
@@ -44,7 +44,7 @@ export function deleteNodeFormKey<D = any>(key: string, nodes: D[], id: string) 
       return [];
     }
     if (isArray(node.children)) {
-      const newChildren = [];
+      const newChildren: any[] = [];
       for (let child of node.children) {
         const result = deleteNodeFormKey(key,[child], id);
         if (result.length) {
@@ -62,7 +62,7 @@ export function deleteNodeFormKey<D = any>(key: string, nodes: D[], id: string) 
 
 export function toList<D = any>(nodes: D[]) {
   const tree = cloneDeep(nodes);
-  const result = [];
+  const result: any[] = [];
   const queue = [...tree];
   while (queue.length > 0) {
     const node = queue.shift() as D;

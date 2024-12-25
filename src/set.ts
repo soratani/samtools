@@ -11,7 +11,7 @@ export function unrepetition<D = any>(array: D[], index?: string): D[] {
         if (maps.length) {
             const keys = unrepetition(maps.map(item => item[index]).filter(Boolean));
             return keys.reduce((a: D[], b: string, idx: number) => {
-                const item = maps.find(item => item[index] === b);
+                const item = maps.find(item => item[index] === b) as any;
                 return a.concat([item]);
             }, []);
         }
