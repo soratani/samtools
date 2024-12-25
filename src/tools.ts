@@ -1,5 +1,5 @@
-import { every, isEqual, isEqualWith } from "lodash";
-import { isArray, isNull, isObject, isUndefined, type } from "./type";
+import { cloneDeep, every, filter, isEqual, isEqualWith, reduce } from "lodash";
+import { isArray, isNull, isObject, isString, isUndefined, type } from "./type";
 
 export function isDeepEqual(a: any, b: any) {
     function isEqualKeys(keys: string[], _keys: string[]) {
@@ -27,3 +27,28 @@ export function isDeepEqual(a: any, b: any) {
       return isEqual(n, o);
     })
   }
+
+export function deepDelete(data: any, path: string) {
+    const clone = cloneDeep(data);
+    if (!path || !isString(path)) return clone;
+    const paths = filter(path.split('.'), Boolean);
+    if (!paths.length) return clone;
+    const key = paths.shift() as string;
+    if (isObject(clone)) {
+        if (paths.length) {
+            clone[key] = deepDelete(clone[key], paths.join('.'));
+        } else {
+            delete clone[key];
+        }
+        return clone;
+    }
+    if (isArray(clone)) {
+        if (paths.length) {
+            clone[key] = deepDelete(clone[key], paths.join('.'));
+        } else {
+            clone.splice(Number(key), 1);
+        }
+        return clone;
+    }
+    return clone;
+}
