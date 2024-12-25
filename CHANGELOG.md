@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.17
+
+### Patch Changes
+
+- 2b33462: 深层相等对比
+
 ## 1.3.16
 
 ### Patch Changes
