@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.18
+
+### Patch Changes
+
+- b0268b5: 删除
+
 ## 1.3.17
 
 ### Patch Changes
