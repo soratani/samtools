@@ -9,4 +9,5 @@ export * from "./type";
 export * from "./delay";
 export * from "./time";
 export * from './permission';
+export * from './tools';
 export { default as Graph } from "./graph";
