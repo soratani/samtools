@@ -81,7 +81,7 @@ export function perm(...nums:number[]) {
  * @param permissions 
  * @returns 
  */
-export function permissionCompute(resources: Record<string, number>, permissions: Record<string, number>): Record<string, string[]> {
+export function permissionCompute(resources: Record<string, number>, permissions: Record<string, number>): UserPermission {
     const permValues = Object.values(resources);
     const resources_maps = Object.entries(resources);
     const permissions_maps = Object.entries(permissions);
@@ -102,7 +102,7 @@ export function permissionCompute(resources: Record<string, number>, permissions
  * @param allPermissions 
  * @returns 
  */
-export function computeUserPermission(permissions: Record<string, number>, allPermissions: Record<string, number[]>) {
+export function computeUserPermission(permissions: Record<string, number>, allPermissions: Record<string, number[]>): UserPermission {
     const allKeys = Object.keys(allPermissions);
     const keys = Object.keys(permissions);
     return reduce<string, Record<string, number[]>>(allKeys, (pre, key) => {
