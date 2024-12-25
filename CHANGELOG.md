@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.15
+
+### Patch Changes
+
+- a163ac9: 权限
+
 ## 1.3.14
 
 ### Patch Changes
