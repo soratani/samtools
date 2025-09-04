@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.19
+
+### Patch Changes
+
+- da7eb76: 数组插入
+
 ## 1.3.18
 
 ### Patch Changes
