@@ -52,3 +52,10 @@ export function deepDelete(data: any, path: string) {
     }
     return clone;
 }
+
+export function insertArray(arr: any[], index: number, item: any) {
+    if (!Array.isArray(arr)) return arr;
+    const clone = cloneDeep(arr);
+    clone.splice(index, 0, item);
+    return clone;
+}
