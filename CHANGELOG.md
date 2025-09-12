@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.20
+
+### Patch Changes
+
+- b85db55: 树的 slice 功能
+
 ## 1.3.19
 
 ### Patch Changes
