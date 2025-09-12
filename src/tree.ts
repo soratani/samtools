@@ -46,7 +46,7 @@ export function deleteNodeFormKey<D = any>(key: string, nodes: D[], id: string) 
     if (isArray(node.children)) {
       const newChildren: any[] = [];
       for (let child of node.children) {
-        const result = deleteNodeFormKey(key,[child], id);
+        const result = deleteNodeFormKey(key, [child], id);
         if (result.length) {
           newChildren.push(...result);
         }
@@ -73,4 +73,44 @@ export function toList<D = any>(nodes: D[]) {
     }
   }
   return result;
+}
+
+export function slice<T extends Record<string, any>>(tree: T[] | T, level: number, childrenKey = 'children',) {
+  if (level < 1) return undefined;
+
+  // 使用 while 实现广度优先层级裁剪
+  const process = (nodes: T[], maxLevel: number): T[] => {
+    let currentLevel = 1;
+    let queue = nodes.map(node => ({ ...node }));
+    let result = queue;
+
+    while (currentLevel < maxLevel) {
+      let nextLevelNodes: T[] = [];
+      for (let node of queue) {
+        const n = node as Record<string, any>;
+        if (Array.isArray(n[childrenKey])) {
+          // 复制子节点
+          n[childrenKey] = n[childrenKey].map((child: T) => ({ ...child }));
+          nextLevelNodes.push(...n[childrenKey]);
+        } else {
+          delete n[childrenKey];
+        }
+      }
+      queue = nextLevelNodes;
+      currentLevel++;
+    }
+    // 超出层级的 children 置空
+    for (let node of queue) {
+      const n = node as Record<string, any>;
+      if (n[childrenKey]) {
+        delete n[childrenKey];
+      }
+    }
+    return result;
+  };
+
+  if (Array.isArray(tree)) {
+    return process(tree, level);
+  }
+  return process([tree], level)[0];
 }
