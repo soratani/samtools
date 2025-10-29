@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.0
+
+### Minor Changes
+
+- 2ba2d67: 模版解析
+
 ## 1.4.0
 
 ### Minor Changes
