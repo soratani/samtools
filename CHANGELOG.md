@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.4.0
+
+### Minor Changes
+
+- 42088fb: 模版解析
+
 ## 1.3.21
 
 ### Patch Changes
