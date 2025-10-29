@@ -7,7 +7,7 @@ describe("时间测试", () => {
     expect(time).toEqual(time1);
   });
   it("格式转换", () => {
-    const time = new Time(Date.now());
+    const time = new Time("2024-12-24");
     const date = time.format("YYYY-MM-DD");
     expect(date).toEqual("2024-12-24");
   });

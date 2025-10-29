@@ -19,8 +19,6 @@ describe("图结构测试", () => {
     graph.addEdge(3, 7);
     graph.addEdge(4, 7);
     graph.addEdge(7, 9);
-    graph.addEdge(2, 9);
     const a = graph.path(1, 9);
-    console.log(a);
   });
 });

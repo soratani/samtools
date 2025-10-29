@@ -7,7 +7,7 @@ describe("转换函数测试", () => {
         declare_year: undefined,
         rank_ids: ['e490b849-5de8-4563-9faf-15c64b628d5c'],
         release_date: undefined,
-    }
-    console.log(isNotEmpty(data))
+    };
+    expect(isNotEmpty(data)).toEqual({ rank_ids: [ 'e490b849-5de8-4563-9faf-15c64b628d5c' ] });
   });
 });
