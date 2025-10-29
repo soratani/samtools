@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.2
+
+### Patch Changes
+
+- 5f8435b: 模版解析
+
 ## 1.5.1
 
 ### Patch Changes
