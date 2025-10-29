@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.3.21
+
+### Patch Changes
+
+- 2556c5a: 模版解析
+
 ## 1.3.20
 
 ### Patch Changes
