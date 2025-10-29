@@ -166,3 +166,11 @@ export function replaceTemplateFromOptions(template: string, options: {label: st
         return tpl.replace('${' + opt.label + '}', '${' + opt.value + '}');
     }, cloneDeep(template));
 }
+
+export function mergeTemplateFromOptions(template: string, options: {label: string, value: any}[]) {
+    return reduce(options, (tpl, opt) => {
+        const has = template.includes('${' + opt.value + '}');
+        if (has) return tpl.replace('${' + opt.value + '}', opt.label);
+        return tpl;
+    }, cloneDeep(template));
+}
