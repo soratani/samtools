@@ -1,4 +1,4 @@
-import { cloneDeep, every, filter, isEqual, isEqualWith, reduce } from "lodash";
+import { cloneDeep, every, filter, find, isEqual, isEqualWith, reduce } from "lodash";
 import { isArray, isNull, isObject, isString, isUndefined, type } from "./type";
 
 export function isDeepEqual(a: any, b: any) {
@@ -156,4 +156,13 @@ export function mergeTemplateToSource(source: string, template: string): string 
     });
 
     return replaced;
+}
+
+
+export function replaceTemplateFromOptions(template: string, options: {label: string, value: any}[]) {
+    return reduce(options, (tpl, opt) => {
+        const has = template.includes('${' + opt.value + '}');
+        if (has) tpl;
+        return tpl.replace('${' + opt.label + '}', '${' + opt.value + '}');
+    }, cloneDeep(template));
 }
