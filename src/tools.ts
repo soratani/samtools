@@ -60,69 +60,54 @@ export function insertArray(arr: any[], index: number, item: any) {
     return clone;
 }
 
-export function parseTemplateToOptions(source: string, template: string) {
-    if (!template) return { text: template || '', options: [] };
+export function parseTemplateToOptions(source: string, template: string, opts?: { keepBraces?: boolean }) {
+    const keepBraces = !!opts?.keepBraces;
 
-    // helper: normalize minus and clean label piece
-    const normalizeOp = (ch: any) => (ch === '−' ? '-' : ch);
-    const cleanLabelPiece = (s: any) => (s || '').replace(/[()（）]/g, '').trim();
+    if (!template) return { text: '', items: [] };
 
-    // 1) 提取 value tokens（${...} 内部）
-    const valueTokens: any[] = [];
-    const valueRe = /\$\{\s*([^}]*)\s*\}/g;
-    let m;
-    while ((m = valueRe.exec(template)) !== null) {
-        valueTokens.push(m[1] as any); // 例如 '8718' 或 'null'
+    // 规范化运算符（支持 Unicode minus）
+    const normalizeOp = (ch: string) => (ch === '−' ? '-' : ch);
+
+    // 清理 label 片段：去掉中英文括号并 trim
+    const cleanLabel = (s: string) => (s ?? '').replace(/[()（）]/g, '').trim();
+
+    // 1) 提取 template 中所有 ${...} 内部内容（按出现顺序）
+    const valueTokens: string[] = [];
+    const valRe = /\$\{\s*([^}]*)\s*\}/g;
+    let m: RegExpExecArray | null;
+    while ((m = valRe.exec(template)) !== null) {
+        valueTokens.push(m[1] as any);
     }
 
-    // 2) 提取 label 的分段（按 + 或 - 分割）
-    // 注意：split 会把括号内项也拆开成对应顺序（与 value tokens 顺序一致）
-    const rawLabelPieces = source
-        ? source.split(/\s*[+\-−]\s*/).map((s) => cleanLabelPiece(s)).filter(Boolean)
-        : [];
+    // 2) 从 source 全局按运算符分割出片段（保持顺序）
+    //    注意：这里简单按 + - × / 这些符号切分，能对应 value 中的 ${...} 出现顺序
+    const labelSegmentsRaw = source ? source.split(/[+\-−*/]/) : [];
+    const labelSegments = labelSegmentsRaw.map(s => cleanLabel(s));
 
-    // 3) 提取运算符序列（优先用 label 中的运算符）
-    const opsFromLabel = source ? Array.from(source.matchAll(/[+\-−]/g)).map(x => normalizeOp(x[0])) : [];
-    const opsFromValue = template ? Array.from(template.matchAll(/[+\-−]/g)).map(x => normalizeOp(x[0])) : [];
-    const ops = opsFromLabel.length ? opsFromLabel : opsFromValue;
-
-    // 4) 解析 token -> number|null
-    const parseToken = (tok: any) => {
-        if (tok == null) return null;
-        const t = String(tok).trim();
-        if (t === '' || t.toLowerCase() === 'null') return null;
-        const n = Number(t);
-        return Number.isFinite(n) ? n : null;
-    };
-
-    // 5) 构建 options（按 value tokens 数量）
-    const len = Math.max(valueTokens.length, rawLabelPieces.length);
-    const options: any = [];
+    // 4) 构造 items（按 valueTokens 的数量逐项对应 labelSegments）
+    const len = Math.max(valueTokens.length, labelSegments.length);
+    const items: any[] = [];
     for (let i = 0; i < len; i++) {
-        const label = rawLabelPieces[i] ?? '';
         const raw = valueTokens[i] ?? '';
-        const value = parseToken(raw);
-        options.push({ label, raw, value });
+        const label = labelSegments[i] ?? '';
+        const value = Number(raw);
+        items.push({ label, value: isNaN(value) ? null : value });
     }
 
-    // 6) 用 replace 逐个替换 template 中的 ${...}：如果 token 内容为 null/'' 则替换为对应 label（或 `${label}`）
-    let idx = 0;
-    const text = template.replace(/\$\{\s*([^}]*)\s*\}/g, (match: any, inner: any) => {
+    // 5) 用 replacer 逐个替换 template 中的 ${...}：
+    //    如果 token 是 null/'' -> 用对应 label (或 `${label}`) 替换；否则保留原样
+    let index = 0;
+    const text = template.replace(/\$\{\s*([^}]*)\s*\}/g, (match, inner) => {
         const token = inner == null ? '' : String(inner).trim();
-        const labelForThis = options[idx] ? (options[idx].label || '') : '';
-        idx += 1;
-
+        const mappedLabel = items[index] ? (items[index] as any).label : '';
+        index += 1;
         if (token === '' || token.toLowerCase() === 'null') {
-            return '${' + labelForThis + '}'; // 如果需要保留花括号，可以改为 `${labelForThis}`
+            return keepBraces ? `\${${mappedLabel}}` : mappedLabel;
         }
-        // 否则保留原来的 ${...}（或者你也可以返回数字）
-        return match;
+        return match; // 保留原来的 ${...}
     });
 
-    return {
-        text,
-        options,
-    };
+    return { text, items };
 }
 
 export function mergeTemplateToSource(source: string, template: string): string {
@@ -159,7 +144,7 @@ export function mergeTemplateToSource(source: string, template: string): string 
 }
 
 
-export function replaceTemplateFromOptions(template: string, options: {label: string, value: any}[]) {
+export function replaceTemplateFromOptions(template: string, options: { label: string, value: any }[]) {
     return reduce(options, (tpl, opt) => {
         const has = template.includes('${' + opt.value + '}');
         if (has) tpl;
@@ -167,7 +152,7 @@ export function replaceTemplateFromOptions(template: string, options: {label: st
     }, cloneDeep(template));
 }
 
-export function mergeTemplateFromOptions(template: string, options: {label: string, value: any}[]) {
+export function mergeTemplateFromOptions(template: string, options: { label: string, value: any }[]) {
     return reduce(options, (tpl, opt) => {
         const has = template.includes('${' + opt.value + '}');
         if (has) return tpl.replace('${' + opt.value + '}', opt.label);
