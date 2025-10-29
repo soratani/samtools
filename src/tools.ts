@@ -60,50 +60,69 @@ export function insertArray(arr: any[], index: number, item: any) {
     return clone;
 }
 
-export function parseTemplateToOptions(source: string, template: string): Record<string, any>[] {
-    // 提取 value 中所有 ${...} 的内容（capture group）
-    const valueTokens: string[] = [];
+export function parseTemplateToOptions(source: string, template: string) {
+    if (!template) return { text: template || '', options: [] };
+
+    // helper: normalize minus and clean label piece
+    const normalizeOp = (ch: any) => (ch === '−' ? '-' : ch);
+    const cleanLabelPiece = (s: any) => (s || '').replace(/[()（）]/g, '').trim();
+
+    // 1) 提取 value tokens（${...} 内部）
+    const valueTokens: any[] = [];
     const valueRe = /\$\{\s*([^}]*)\s*\}/g;
-    let m: RegExpExecArray | null;
-    while ((m = valueRe.exec(template ?? '')) !== null) {
-        valueTokens.push(m[1] as any);
+    let m;
+    while ((m = valueRe.exec(template)) !== null) {
+        valueTokens.push(m[1] as any); // 例如 '8718' 或 'null'
     }
 
-    // 从 label 中按 + 或 - 分割出每个子 label（去除周围空白）
-    const rawLabels: string[] = source
-        ? source.split(/\s*[+-]\s*/).map(s => s.trim()).filter(Boolean)
+    // 2) 提取 label 的分段（按 + 或 - 分割）
+    // 注意：split 会把括号内项也拆开成对应顺序（与 value tokens 顺序一致）
+    const rawLabelPieces = source
+        ? source.split(/\s*[+\-−]\s*/).map((s) => cleanLabelPiece(s)).filter(Boolean)
         : [];
 
-    // 清理 label：去掉中英文括号并 trim
-    const cleanLabel = (s: string) => s.replace(/[()（）]/g, '').trim();
-    const labels: string[] = rawLabels.map(cleanLabel);
-
-    // 尝试从 label 中获取运算符序列（如 ['-','+']），若 label 没有则从 template 中获取
-    const opsFromLabel = source ? (source.match(/[+-]/g) || []) : [];
-    const opsFromValue = template ? (template.match(/[+-]/g) || []) : [];
+    // 3) 提取运算符序列（优先用 label 中的运算符）
+    const opsFromLabel = source ? Array.from(source.matchAll(/[+\-−]/g)).map(x => normalizeOp(x[0])) : [];
+    const opsFromValue = template ? Array.from(template.matchAll(/[+\-−]/g)).map(x => normalizeOp(x[0])) : [];
     const ops = opsFromLabel.length ? opsFromLabel : opsFromValue;
 
-    // 解析单个 token -> number | null
-    const parseValue = (token: string | undefined): number | null => {
-        if (token == null) return null;
-        const t = token.trim();
+    // 4) 解析 token -> number|null
+    const parseToken = (tok: any) => {
+        if (tok == null) return null;
+        const t = String(tok).trim();
         if (t === '' || t.toLowerCase() === 'null') return null;
         const n = Number(t);
         return Number.isFinite(n) ? n : null;
     };
 
-    const len = Math.max(labels.length, valueTokens.length);
-    const result: any[] = [];
-
+    // 5) 构建 options（按 value tokens 数量）
+    const len = Math.max(valueTokens.length, rawLabelPieces.length);
+    const options: any = [];
     for (let i = 0; i < len; i++) {
-        const label = labels[i] ?? '';
-        const raw = valueTokens[i]; // 这是 ${...} 内部的原始内容
-        const value = parseValue(raw);
-
-        result.push({ label, value });
+        const label = rawLabelPieces[i] ?? '';
+        const raw = valueTokens[i] ?? '';
+        const value = parseToken(raw);
+        options.push({ label, raw, value });
     }
 
-    return result;
+    // 6) 用 replace 逐个替换 template 中的 ${...}：如果 token 内容为 null/'' 则替换为对应 label（或 `${label}`）
+    let idx = 0;
+    const text = template.replace(/\$\{\s*([^}]*)\s*\}/g, (match: any, inner: any) => {
+        const token = inner == null ? '' : String(inner).trim();
+        const labelForThis = options[idx] ? (options[idx].label || '') : '';
+        idx += 1;
+
+        if (token === '' || token.toLowerCase() === 'null') {
+            return '${' + labelForThis + '}'; // 如果需要保留花括号，可以改为 `${labelForThis}`
+        }
+        // 否则保留原来的 ${...}（或者你也可以返回数字）
+        return match;
+    });
+
+    return {
+        text,
+        options,
+    };
 }
 
 export function mergeTemplateToSource(source: string, template: string): string {
