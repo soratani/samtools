@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.1
+
+### Patch Changes
+
+- 56c7657: 模版解析
+
 ## 1.5.0
 
 ### Minor Changes
