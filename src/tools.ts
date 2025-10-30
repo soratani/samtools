@@ -168,3 +168,58 @@ export function parseOperatorsTokens(expr: string | null | undefined): string[] 
         .map((s) => s.trim())
         .filter(Boolean);
 }
+
+function escapeHtml(s: string) {
+    return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+/**
+ * 精确匹配数组中的项并在文本中高亮（只匹配完整项，不匹配项的子串）。
+ * 对中文项使用“非汉字/非单词字符”作为边界判断，保证如“物品总售价”不会匹配到“总体物品总售价”的中间部分。
+ *
+ * 返回值为 HTML 字符串，匹配部分被包裹为 `<tag class="className">...</tag>`，其余部分做 HTML 转义。
+ */
+export function highlightMatchesToHtml(
+    text: string | null | undefined,
+    terms: string[] | null | undefined,
+    options?: { tag?: string; className?: string }
+): string {
+    if (text == null) return '';
+    const tlist = (terms || []).filter(Boolean);
+    if (!tlist.length) return escapeHtml(text);
+
+    const tag = options?.tag || 'mark';
+    const className = options?.className || 'samtools-highlight';
+
+    // 去重并按长度降序，优先匹配长项
+    const unique = Array.from(new Set(tlist)).sort((a, b) => b.length - a.length);
+    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const alt = unique.map(esc).join('|');
+
+    // 我们使用前后边界为 非汉字或非单词字符 的模式来保证精确匹配
+    // 捕获前缀 (可能为空) 以及目标项以便在重建字符串时保留前缀
+    const re = new RegExp(`(^|[^\\p{Script=Han}\\w])(${alt})(?=$|[^\\p{Script=Han}\\w])`, 'gu');
+
+    let lastIndex = 0;
+    let out = '';
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text)) !== null) {
+        const idx = m.index;
+        const prefix = m[1] || '';
+        const matched = m[2];
+        // append non-matched chunk
+        if (idx > lastIndex) out += escapeHtml(text.slice(lastIndex, idx));
+        // append prefix (可能是一个符号或空字符串)
+        out += escapeHtml(prefix);
+        // append highlighted match
+        out += `<${tag} class="${escapeHtml(className)}">${escapeHtml(matched)}</${tag}>`;
+        lastIndex = idx + prefix.length + matched.length;
+    }
+    if (lastIndex < text.length) out += escapeHtml(text.slice(lastIndex));
+    return out;
+}
