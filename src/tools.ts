@@ -159,3 +159,12 @@ export function mergeTemplateFromOptions(template: string, options: { label: str
         return tpl;
     }, cloneDeep(template));
 }
+
+
+export function parseOperatorsTokens(expr: string | null | undefined): string[] {
+    if (expr == null) return [];
+    return expr
+        .split(/[+\-*/()]/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+}
