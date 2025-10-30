@@ -1,6 +1,6 @@
 {
   "name": "@soratani-code/samtools",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "",
   "typings": "lib/index.d.ts",
   "main": "lib/index.js",

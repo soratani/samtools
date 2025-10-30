@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.3
+
+### Patch Changes
+
+- 96d29e9: 计算公式算子拆分
+
 ## 1.5.2
 
 ### Patch Changes
