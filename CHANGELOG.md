@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.4
+
+### Patch Changes
+
+- fba8f7b: 算子高亮
+
 ## 1.5.3
 
 ### Patch Changes
