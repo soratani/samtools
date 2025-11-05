@@ -223,3 +223,42 @@ export function highlightMatchesToHtml(
     if (lastIndex < text.length) out += escapeHtml(text.slice(lastIndex));
     return out;
 }
+
+
+export function insertBetweenImmutable<D = any>(arr: D[], filler: (index: number) => D) {
+    const n = arr.length;
+    if (n === 0) return [];
+    if (n === 1) return [arr[0]]; // 无“中间”可以插入
+
+    const out: D[] = [];
+    for (let i = 0; i < n; i++) {
+        out.push(arr[i]);
+        if (i !== n - 1) out.push(filler(i));
+    }
+    return out;
+}
+
+export function interchangeById<T extends Record<string, any> = any>(
+    arr: T[] | (string | number)[],
+    idA: string | number,
+    idB: string | number,
+    idKey = 'id',
+): T[] | (string | number)[] {
+    // 处理简单值数组（string/number）和对象数组
+    const isPrimitive = typeof arr[0] !== 'object' || arr[0] === null;
+
+    const findIndex = (id: string | number) =>
+        isPrimitive
+            ? (arr as (string | number)[]).indexOf(id)
+            : (arr as T[]).findIndex((x) => x[idKey] === id);
+
+    const i = findIndex(idA);
+    const j = findIndex(idB);
+    if (i === -1 || j === -1 || i === j) return arr.slice(); // 返回浅拷贝（或可直接 return arr）
+
+    const copy = arr.slice();
+    const tmp = copy[i];
+    copy[i] = copy[j];
+    copy[j] = tmp;
+    return copy;
+}
