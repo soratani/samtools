@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.5
+
+### Patch Changes
+
+- e64c196: 交换数组位置
+
 ## 1.5.4
 
 ### Patch Changes
