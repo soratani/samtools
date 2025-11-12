@@ -1,9 +1,5 @@
-/**
- * { data-analysis:  ['read', 'write'] }
- */
-
-import { every, filter, find, get, map, reduce } from "lodash";
 import { isString } from "./type";
+import { get } from "./tools";
 
 export type UserPermission = Record<string, (number | string)[]>;
 
@@ -60,11 +56,11 @@ export function filterPermission(code: number, permissions: number[]) {
         return target && target == source || !source;
     }
     function equality(target: string, source: string) {
-        const tar = reversePermissionBinary(target);
-        const sou = reversePermissionBinary(source);
-        return every(sou, (i, index) => diff(Number(tar[index]), Number(i)));
+        const tar = reversePermissionBinary(target).split("");
+        const sou = reversePermissionBinary(source).split("");
+        return sou.every((i, index) => diff(Number(tar[index]), Number(i)));
     }
-    return filter(permissions, (i) => equality(bina, binary(i)));
+    return permissions.filter((i) => equality(bina, binary(i)));
 }
 
 /**
@@ -72,7 +68,7 @@ export function filterPermission(code: number, permissions: number[]) {
  * @param nums
  */
 export function perm(...nums:number[]) {
-    return reduce(nums, (pre, n) => pre | n, 0);
+    return nums.reduce((pre, n) => pre | n, 0);
 }
 
 /**
@@ -85,10 +81,10 @@ export function permissionCompute(resources: Record<string, number>, permissions
     const permValues = Object.values(resources);
     const resources_maps = Object.entries(resources);
     const permissions_maps = Object.entries(permissions);
-    return reduce(permissions_maps, (pre, item) => {
+    return permissions_maps.reduce((pre, item) => {
         const [key, code] = item;
-        pre[key] = map(filterPermission(code, permValues), (i) => {
-            const item = find(resources_maps, o => o[1] === i);
+        pre[key] = filterPermission(code, permValues).map((i) => {
+            const item = resources_maps.find(o => o[1] === i);
             const perm = get(item, '0');
             return perm;
         }).filter(Boolean);
@@ -105,7 +101,7 @@ export function permissionCompute(resources: Record<string, number>, permissions
 export function computeUserPermission(permissions: Record<string, number>, allPermissions: Record<string, number[]>): UserPermission {
     const allKeys = Object.keys(allPermissions);
     const keys = Object.keys(permissions);
-    return reduce<string, Record<string, number[]>>(allKeys, (pre, key) => {
+    return allKeys.reduce((pre, key) => {
         if (keys.includes(key)) {
             pre[key] = filterPermission(permissions[key], allPermissions[key]);
         }

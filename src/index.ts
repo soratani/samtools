@@ -1,6 +1,7 @@
 export * as tree from './tree';
 export * as set from "./set";
 export * as log from "./log";
+export * as template from './template';
 export * as color from "./color";
 export * as query from "./query";
 export * as transform from "./transform";

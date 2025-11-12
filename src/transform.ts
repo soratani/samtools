@@ -1,5 +1,4 @@
-import { cloneDeep, filter, get, map, reduce } from 'lodash';
-import { ListToTreeSchema, TreeChildren } from '.';
+import { cloneDeep, get, ListToTreeSchema, TreeChildren } from '.';
 import { isArray, isEmpty, isNull, isNum, isObject, isUndefined } from './type';
 
 function schemaToObj(obj: any, schema?: ListToTreeSchema) {
@@ -54,7 +53,7 @@ export function enumToOptions(params: any = {}) {
 export function isNotEmpty(data: any) {
   if(isEmpty(data)) return data;
   if(isObject(data)) {
-    return reduce(Object.keys(data), (pre, key) => {
+    return Object.keys(data).reduce((pre, key) => {
       if (isUndefined(data[key]) || isNull(data[key])) return pre;
       if(isObject(data[key]) || isArray(data[key])) {
         pre[key] = isNotEmpty(data[key]);
@@ -65,7 +64,7 @@ export function isNotEmpty(data: any) {
     }, {});
   }
   if (isArray(data)) {
-    return map(data, (item) => {
+    return data.map((item) => {
       if (isObject(item) || isArray(item)) return isNotEmpty(item);
       return item;
     })
@@ -75,11 +74,11 @@ export function isNotEmpty(data: any) {
 
 export function conversMenusPath<D = any, P = string, C = string>(data: D[], key: P, child: C, prefix?: string) {
   if (!data || !data.length) return data;
-  return map(data, (item: any) => {
+  return data.map((item: any) => {
     const clone = cloneDeep(item);
     const children = get(clone, child as string, []);
-    const mergePath = filter([prefix, item[key]], Boolean).join('/')
-    const path = filter(mergePath.split('/'), Boolean).join('/');
+    const mergePath = [prefix, item[key]].filter(Boolean).join('/')
+    const path = mergePath.split('/').filter(Boolean).join('/');
     clone[key] = path.startsWith('/') ? path : `/${path}`;
     if (children.length) {
       clone[child] = conversMenusPath(children, key, child, clone[key]);

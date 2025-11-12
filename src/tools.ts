@@ -1,42 +1,313 @@
-import { cloneDeep, every, filter, find, isEqual, isEqualWith, reduce } from "lodash";
-import { isArray, isNull, isObject, isString, isUndefined, type } from "./type";
+import { isArray, isObject, isString } from "./type";
 
-export function isDeepEqual(a: any, b: any) {
-    function isEqualKeys(keys: string[], _keys: string[]) {
-        const sk = keys.sort();
-        const _sk = _keys.sort();
-        return isEqual(sk, _sk);
+
+export function cloneDeep<T>(value: T): T {
+    // Iterative implementation (no recursion)
+    if (value === null || typeof value !== 'object') return value;
+
+    const seen = new WeakMap<any, any>();
+
+    const createEmpty = (val: any) => {
+        if (val instanceof Date) return new Date(val.getTime());
+        if (val instanceof RegExp) return new RegExp(val.source, (val as RegExp).flags);
+        if (Array.isArray(val)) return [];
+        if (val instanceof Map) return new Map();
+        if (val instanceof Set) return new Set();
+        if (ArrayBuffer.isView(val)) {
+            const Ctor = (val as any).constructor as any;
+            return new Ctor((val as any).length);
+        }
+        const proto = Object.getPrototypeOf(val);
+        return Object.create(proto);
+    };
+
+    const root = createEmpty(value as any);
+    seen.set(value as any, root);
+
+    const stack: Array<{ src: any; dst: any }> = [{ src: value as any, dst: root }];
+
+    while (stack.length) {
+        const { src, dst } = stack.pop()!;
+
+        // Handle Map
+        if (src instanceof Map) {
+            src.forEach((v: any, k: any) => {
+                if (v && typeof v === 'object') {
+                    if (seen.has(v)) dst.set(k, seen.get(v));
+                    else {
+                        const node = createEmpty(v);
+                        seen.set(v, node);
+                        dst.set(k, node);
+                        stack.push({ src: v, dst: node });
+                    }
+                } else dst.set(k, v);
+            });
+            continue;
+        }
+
+        // Handle Set
+        if (src instanceof Set) {
+            src.forEach((v: any) => {
+                if (v && typeof v === 'object') {
+                    if (seen.has(v)) dst.add(seen.get(v));
+                    else {
+                        const node = createEmpty(v);
+                        seen.set(v, node);
+                        dst.add(node);
+                        stack.push({ src: v, dst: node });
+                    }
+                } else dst.add(v);
+            });
+            continue;
+        }
+
+        // TypedArray / ArrayBuffer view
+        if (ArrayBuffer.isView(src)) {
+            // copy elements
+            for (let i = 0; i < (src as any).length; i++) dst[i] = (src as any)[i];
+            continue;
+        }
+
+        // Array
+        if (Array.isArray(src)) {
+            for (let i = 0; i < src.length; i++) {
+                const v = src[i];
+                if (v && typeof v === 'object') {
+                    if (seen.has(v)) dst[i] = seen.get(v);
+                    else {
+                        const node = createEmpty(v);
+                        seen.set(v, node);
+                        dst[i] = node;
+                        stack.push({ src: v, dst: node });
+                    }
+                } else dst[i] = v;
+            }
+            // copy non-index own props and symbols
+            const keys = Object.keys(src).filter((k) => String(Number(k)) !== k);
+            for (const key of keys) {
+                const v = (src as any)[key];
+                if (v && typeof v === 'object') {
+                    if (seen.has(v)) dst[key] = seen.get(v);
+                    else {
+                        const node = createEmpty(v);
+                        seen.set(v, node);
+                        dst[key] = node;
+                        stack.push({ src: v, dst: node });
+                    }
+                } else dst[key] = v;
+            }
+            const syms = Object.getOwnPropertySymbols(src);
+            for (const s of syms) dst[s as any] = (src as any)[s as any];
+            continue;
+        }
+
+        // Plain object
+        const ownKeys = Object.keys(src);
+        for (const key of ownKeys) {
+            const v = src[key];
+            if (v && typeof v === 'object') {
+                if (seen.has(v)) dst[key] = seen.get(v);
+                else {
+                    const node = createEmpty(v);
+                    seen.set(v, node);
+                    dst[key] = node;
+                    stack.push({ src: v, dst: node });
+                }
+            } else dst[key] = v;
+        }
+        const symbols = Object.getOwnPropertySymbols(src);
+        for (const sym of symbols) {
+            const v = src[sym as any];
+            if (v && typeof v === 'object') {
+                if (seen.has(v)) dst[sym as any] = seen.get(v);
+                else {
+                    const node = createEmpty(v);
+                    seen.set(v, node);
+                    dst[sym as any] = node;
+                    stack.push({ src: v, dst: node });
+                }
+            } else dst[sym as any] = v;
+        }
     }
 
-    return isEqualWith(a, b, (n, o) => {
-        if (type(n) !== type(o)) return false;
-        if (isObject(n)) {
-            const nk = Object.keys(n);
-            const ok = Object.keys(o);
-            if (nk.length !== ok.length || !isEqualKeys(nk, ok)) return false;
-            return every(nk, (key) => isDeepEqual(n[key], o[key]));
-        }
-        if (isArray(n)) {
-            if (n.length !== o.length) return false;
-            return every(n, (item, index) => {
-                return isDeepEqual(item, o[index]);
-            })
-        }
-        if (isUndefined(n)) return isUndefined(o);
-        if (isNull(n)) return isNull(o);
-        return isEqual(n, o);
-    })
+    return root as T;
 }
 
-export function deepDelete(data: any, path: string) {
+export function isEqual(a: any, b: any): boolean {
+    const aStack: any[] = [];
+    const bStack: any[] = [];
+
+    function eq(x: any, y: any): boolean {
+        if (x === y) return x !== 0 || 1 / x === 1 / y; // -0
+        if (x !== x && y !== y) return true; // NaN
+        const typeX = typeof x;
+        const typeY = typeof y;
+        if (typeX !== 'object' || typeY !== 'object') return false;
+        if (x == null || y == null) return x === y;
+
+        // cyclic references
+        for (let i = 0; i < aStack.length; i++) {
+            if (aStack[i] === x) return bStack[i] === y;
+        }
+
+        const toString = Object.prototype.toString;
+        const xTag = toString.call(x);
+        const yTag = toString.call(y);
+        if (xTag !== yTag) return false;
+
+        switch (xTag) {
+            case '[object String]':
+            case '[object Boolean]':
+            case '[object Number]':
+                return Object.prototype.valueOf.call(x) === Object.prototype.valueOf.call(y);
+            case '[object Date]':
+                return (x as Date).getTime() === (y as Date).getTime();
+            case '[object RegExp]':
+                return (x as RegExp).source === (y as RegExp).source && (x as RegExp).flags === (y as RegExp).flags;
+            case '[object Map]':
+                if ((x as Map<any, any>).size !== (y as Map<any, any>).size) return false;
+                break;
+            case '[object Set]':
+                if ((x as Set<any>).size !== (y as Set<any>).size) return false;
+                break;
+            default:
+                break;
+        }
+
+        aStack.push(x);
+        bStack.push(y);
+
+        if (xTag === '[object Array]') {
+            if ((x as any[]).length !== (y as any[]).length) {
+                aStack.pop();
+                bStack.pop();
+                return false;
+            }
+            for (let i = 0; i < (x as any[]).length; i++) if (!eq(x[i], y[i])) {
+                aStack.pop();
+                bStack.pop();
+                return false;
+            }
+            aStack.pop();
+            bStack.pop();
+            return true;
+        }
+
+        if (xTag === '[object Map]') {
+            const mx = x as Map<any, any>;
+            const my = y as Map<any, any>;
+            for (const [kx, vx] of mx) {
+                let found = false;
+                for (const [ky, vy] of my) {
+                    if (eq(kx, ky) && eq(vx, vy)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    aStack.pop();
+                    bStack.pop();
+                    return false;
+                }
+            }
+            aStack.pop();
+            bStack.pop();
+            return true;
+        }
+
+        if (xTag === '[object Set]') {
+            const sx = Array.from(x as Set<any>);
+            const sy = Array.from(y as Set<any>);
+            for (const ex of sx) {
+                let found = false;
+                for (let j = 0; j < sy.length; j++) {
+                    if (eq(ex, sy[j])) {
+                        sy.splice(j, 1);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    aStack.pop();
+                    bStack.pop();
+                    return false;
+                }
+            }
+            aStack.pop();
+            bStack.pop();
+            return true;
+        }
+
+        if (ArrayBuffer.isView(x)) {
+            const lx = (x as any).length;
+            if (lx !== (y as any).length) {
+                aStack.pop();
+                bStack.pop();
+                return false;
+            }
+            for (let i = 0; i < lx; i++) if ((x as any)[i] !== (y as any)[i]) {
+                aStack.pop();
+                bStack.pop();
+                return false;
+            }
+            aStack.pop();
+            bStack.pop();
+            return true;
+        }
+
+        const keysX = Object.keys(x);
+        const keysY = Object.keys(y);
+        if (keysX.length !== keysY.length) {
+            aStack.pop();
+            bStack.pop();
+            return false;
+        }
+        for (const key of keysX) if (!(key in y)) {
+            aStack.pop();
+            bStack.pop();
+            return false;
+        }
+
+        const symX = Object.getOwnPropertySymbols(x);
+        const symY = Object.getOwnPropertySymbols(y);
+        if (symX.length !== symY.length) {
+            aStack.pop();
+            bStack.pop();
+            return false;
+        }
+
+        for (const key of keysX) {
+            if (!eq(x[key], y[key])) {
+                aStack.pop();
+                bStack.pop();
+                return false;
+            }
+        }
+        for (const s of symX) {
+            if (!eq(x[s as any], y[s as any])) {
+                aStack.pop();
+                bStack.pop();
+                return false;
+            }
+        }
+
+        aStack.pop();
+        bStack.pop();
+        return true;
+    }
+
+    return eq(a, b);
+}
+
+export function deleteDeep(data: any, path: string) {
     const clone = cloneDeep(data);
     if (!path || !isString(path)) return clone;
-    const paths = filter(path.split('.'), Boolean);
+    const paths = path.split('.').filter(Boolean);
     if (!paths.length) return clone;
     const key = paths.shift() as string;
     if (isObject(clone)) {
         if (paths.length) {
-            clone[key] = deepDelete(clone[key], paths.join('.'));
+            clone[key] = deleteDeep(clone[key], paths.join('.'));
         } else {
             delete clone[key];
         }
@@ -44,7 +315,7 @@ export function deepDelete(data: any, path: string) {
     }
     if (isArray(clone)) {
         if (paths.length) {
-            clone[key] = deepDelete(clone[key], paths.join('.'));
+            clone[key] = deleteDeep(clone[key], paths.join('.'));
         } else {
             clone.splice(Number(key), 1);
         }
@@ -59,169 +330,58 @@ export function insertArray(arr: any[], index: number, item: any) {
     clone.splice(index, 0, item);
     return clone;
 }
+export function get(obj: any, path: string | Array<string | number> | number, defaultValue?: any): any {
+    if (obj == null) return defaultValue;
 
-export function parseTemplateToOptions(source: string, template: string, opts?: { keepBraces?: boolean }) {
-    const keepBraces = !!opts?.keepBraces;
-
-    if (!template) return { text: '', items: [] };
-
-    // 规范化运算符（支持 Unicode minus）
-    const normalizeOp = (ch: string) => (ch === '−' ? '-' : ch);
-
-    // 清理 label 片段：去掉中英文括号并 trim
-    const cleanLabel = (s: string) => (s ?? '').replace(/[()（）]/g, '').trim();
-
-    // 1) 提取 template 中所有 ${...} 内部内容（按出现顺序）
-    const valueTokens: string[] = [];
-    const valRe = /\$\{\s*([^}]*)\s*\}/g;
-    let m: RegExpExecArray | null;
-    while ((m = valRe.exec(template)) !== null) {
-        valueTokens.push(m[1] as any);
-    }
-
-    // 2) 从 source 全局按运算符分割出片段（保持顺序）
-    //    注意：这里简单按 + - × / 这些符号切分，能对应 value 中的 ${...} 出现顺序
-    const labelSegmentsRaw = source ? source.split(/[+\-−*/]/) : [];
-    const labelSegments = labelSegmentsRaw.map(s => cleanLabel(s));
-
-    // 4) 构造 items（按 valueTokens 的数量逐项对应 labelSegments）
-    const len = Math.max(valueTokens.length, labelSegments.length);
-    const items: any[] = [];
-    for (let i = 0; i < len; i++) {
-        const raw = valueTokens[i] ?? '';
-        const label = labelSegments[i] ?? '';
-        const value = Number(raw);
-        items.push({ label, value: isNaN(value) ? null : value });
-    }
-
-    // 5) 用 replacer 逐个替换 template 中的 ${...}：
-    //    如果 token 是 null/'' -> 用对应 label (或 `${label}`) 替换；否则保留原样
-    let index = 0;
-    const text = template.replace(/\$\{\s*([^}]*)\s*\}/g, (match, inner) => {
-        const token = inner == null ? '' : String(inner).trim();
-        const mappedLabel = items[index] ? (items[index] as any).label : '';
-        index += 1;
-        if (token === '' || token.toLowerCase() === 'null') {
-            return keepBraces ? `\${${mappedLabel}}` : mappedLabel;
+    const toPath = (p: string | Array<string | number> | number): Array<string | number> => {
+        if (Array.isArray(p)) return p as Array<string | number>;
+        if (typeof p === 'number') return [p];
+        // string
+        const str = String(p);
+        const res: Array<string | number> = [];
+        // regex matches either bracketed parts or dot-separated identifiers
+        const re = /\[(?:'([^']*)'|"([^"]*)"|([^'"\]]+))\]|([^.\[\]]+)/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(str)) !== null) {
+            const part = m[1] ?? m[2] ?? m[3] ?? m[4];
+            if (part === undefined) continue;
+            // numeric index -> number
+            if (/^-?\d+$/.test(part)) res.push(Number(part));
+            else res.push(part);
         }
-        return match; // 保留原来的 ${...}
-    });
+        return res;
+    };
 
-    return { text, items };
+    const keys = toPath(path);
+    let cur = obj;
+    for (const key of keys) {
+        if (cur == null) return defaultValue;
+        cur = cur[key as any];
+    }
+    return cur === undefined ? defaultValue : cur;
 }
 
-export function mergeTemplateToSource(source: string, template: string): string {
-    if (typeof source !== 'string' || typeof template !== 'string') return template;
+export function omit<T extends any = any>(obj: T | null | undefined, props: string | Array<string>): Partial<T> {
+    if (obj == null) return {} as Partial<T>;
+    const keys = Array.isArray(props) ? props : [props];
+    // start from a deep clone so we don't mutate input
+    let result: any = cloneDeep(obj as any);
 
-    // 正则：匹配 "/" 后的 "[可选左括号] 左操作数 - 右操作数 [可选右括号]"
-    // 它尽量容忍两边是否有括号与空白。
-    const regex = /\/\s*(?:\(\s*)?([^()\/-]+?)\s*-\s*([^()\/]+?)(?:\s*\))?/g;
+    const normalize = (p: string) =>
+        String(p)
+            // convert bracket notation ['a'] or ["a"] or [0] to .a or .0
+            .replace(/\[(?:'([^']*)'|"([^\"]*)"|([^\]]+))\]/g, (_m, g1, g2, g3) => '.' + (g1 ?? g2 ?? g3))
+            .replace(/^\./, '');
 
-    const leftOperands: any[] = [];
-    let m: any;
-    while ((m = regex.exec(source)) !== null) {
-        // m[1] 是分母的左操作数
-        leftOperands.push(m[1].trim());
+    for (const k of keys) {
+        if (k == null) continue;
+        const path = normalize(k);
+        if (!path) continue;
+        // use deepDelete which returns a cloned structure with the path removed
+        result = deleteDeep(result, path);
     }
 
-    if (!leftOperands.length) {
-        // 没找到可替换的值，直接返回模板（或可选择抛错）
-        return template;
-    }
-
-    // 替换模板中的 ${null} 或 独立的 null（按遇到的顺序）
-    let idx = 0;
-    const replaced = template.replace(/\$\{null\}|\bnull\b/g, (match) => {
-        if (idx >= leftOperands.length) {
-            // 如果替换次数超过提取的值数量，保持原样或使用最后一个值，这里选择保持原样
-            return match;
-        }
-        const val = leftOperands[idx++];
-        return val;
-    });
-
-    return replaced;
-}
-
-
-export function replaceTemplateFromOptions(template: string, options: { label: string, value: any }[]) {
-    return reduce(options, (tpl, opt) => {
-        const has = template.includes('${' + opt.value + '}');
-        if (has) tpl;
-        return tpl.replace('${' + opt.label + '}', '${' + opt.value + '}');
-    }, cloneDeep(template));
-}
-
-export function mergeTemplateFromOptions(template: string, options: { label: string, value: any }[]) {
-    return reduce(options, (tpl, opt) => {
-        const has = template.includes('${' + opt.value + '}');
-        if (has) return tpl.replace('${' + opt.value + '}', opt.label);
-        return tpl;
-    }, cloneDeep(template));
-}
-
-
-export function parseOperatorsTokens(expr: string | null | undefined): string[] {
-    if (expr == null) return [];
-    return expr
-        .split(/[+\-*/()]/)
-        .map((s) => s.trim())
-        .filter(Boolean);
-}
-
-function escapeHtml(s: string) {
-    return s
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-/**
- * 精确匹配数组中的项并在文本中高亮（只匹配完整项，不匹配项的子串）。
- * 对中文项使用“非汉字/非单词字符”作为边界判断，保证如“物品总售价”不会匹配到“总体物品总售价”的中间部分。
- *
- * 返回值为 HTML 字符串，匹配部分被包裹为 `<tag class="className">...</tag>`，其余部分做 HTML 转义。
- */
-export function highlightMatchesToHtml(
-    text: string | null | undefined,
-    terms: string[] | null | undefined,
-    options?: { tag?: string; className?: string }
-): string {
-    if (text == null) return '';
-    const tlist = (terms || []).filter(Boolean);
-    if (!tlist.length) return escapeHtml(text);
-
-    const tag = options?.tag || 'mark';
-    const className = options?.className || 'samtools-highlight';
-
-    // 去重并按长度降序，优先匹配长项
-    const unique = Array.from(new Set(tlist)).sort((a, b) => b.length - a.length);
-    const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const alt = unique.map(esc).join('|');
-
-    // 我们使用前后边界为 非汉字或非单词字符 的模式来保证精确匹配
-    // 捕获前缀 (可能为空) 以及目标项以便在重建字符串时保留前缀
-    const re = new RegExp(`(^|[^\\p{Script=Han}\\w])(${alt})(?=$|[^\\p{Script=Han}\\w])`, 'gu');
-
-    let lastIndex = 0;
-    let out = '';
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(text)) !== null) {
-        const idx = m.index;
-        const prefix = m[1] || '';
-        const matched = m[2];
-        // append non-matched chunk
-        if (idx > lastIndex) out += escapeHtml(text.slice(lastIndex, idx));
-        // append prefix (可能是一个符号或空字符串)
-        out += escapeHtml(prefix);
-        // append highlighted match
-        out += `<${tag} class="${escapeHtml(className)}">${escapeHtml(matched)}</${tag}>`;
-        lastIndex = idx + prefix.length + matched.length;
-    }
-    if (lastIndex < text.length) out += escapeHtml(text.slice(lastIndex));
-    return out;
+    return result as Partial<T>;
 }
 
 
@@ -262,3 +422,5 @@ export function interchangeById<T extends Record<string, any> = any>(
     copy[j] = tmp;
     return copy;
 }
+
+
