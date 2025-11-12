@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.6
+
+### Patch Changes
+
+- 7416682: 去除 lodash 依赖
+
 ## 1.5.5
 
 ### Patch Changes
