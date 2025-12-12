@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.8
+
+### Patch Changes
+
+- 18ada63: 枚举转换
+
 ## 1.5.7
 
 ### Patch Changes
