@@ -114,3 +114,51 @@ export function slice<T extends Record<string, any>>(tree: T[] | T, level: numbe
   }
   return process([tree], level)[0];
 }
+
+
+type ToTreeOptions = {
+    idKey?: string;
+    parentKey?: string;
+    clone?: boolean;
+}
+
+type ArrayTree<T extends Record<string, any>> = T & {
+  children?: ArrayTree<T>[];
+}
+
+export function toTree<T extends Record<string, any>>(items: T[] | null | undefined, rootValue: any, options?: ToTreeOptions): ArrayTree<T>[] {
+    if (!items || !items.length) return [] as ArrayTree<T>[];
+
+    const idKey = options?.idKey ?? 'id';
+    const parentKey = options?.parentKey ?? 'parentId';
+    const childrenKey = 'children';
+    const rootParentValue = rootValue ?? null;
+    const doClone = options?.clone !== false;
+
+    const source = doClone ? (cloneDeep(items) as T[]) : items;
+
+    const map = new Map<any, any>();
+    for (const it of source) {
+        const id = it[idKey];
+        const node = Object.assign({}, it) as ArrayTree<T>;
+        map.set(id, node);
+    }
+
+    const roots: any[] = [];
+    for (const it of source) {
+        const id = it[idKey];
+        const pid = it[parentKey];
+        const node = map.get(id);
+        if (pid === rootParentValue || pid == null || !map.has(pid)) {
+            roots.push(node);
+        } else {
+            const parent = map.get(pid);
+            if (node) {
+              if (!parent[childrenKey]) parent[childrenKey] = [];
+              parent[childrenKey].push(node);
+            }
+        }
+    }
+
+    return roots;
+}
