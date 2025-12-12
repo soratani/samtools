@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.7
+
+### Patch Changes
+
+- 2870654: 数组转树
+
 ## 1.5.6
 
 ### Patch Changes
