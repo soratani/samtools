@@ -46,7 +46,9 @@ export function enumToList<K = number, V = string>(params: any): [K, V][] {
 
 export function enumToOptions(params: any = {}) {
   return Object.entries(params).reduce((a: { label: string, value: any }[], b) => {
-    return a.concat([{ label: b[0], value: b[1] }]);
+    const num = Number(b[0]);
+    if (!isNum(num)) return a.concat([{ label: b[0], value: b[1] }]);
+    return a;
   }, [])
 }
 
