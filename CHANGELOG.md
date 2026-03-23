@@ -1,5 +1,11 @@
 # @frade-sam/samtools
 
+## 1.5.9
+
+### Patch Changes
+
+- 91f4cf9: insertByIndex
+
 ## 1.5.8
 
 ### Patch Changes
