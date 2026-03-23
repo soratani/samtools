@@ -424,3 +424,10 @@ export function interchangeById<T extends Record<string, any> = any>(
 }
 
 
+
+export function clamp(n: any, min2: any, max2: any) {
+  if (max2 != null && min2 != null && min2 > max2) {
+    throw new Error("invalid clamp range");
+  }
+  return max2 != null && n > max2 ? max2 : min2 != null && n < min2 ? min2 : n;
+}

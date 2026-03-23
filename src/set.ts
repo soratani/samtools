@@ -1,3 +1,4 @@
+import { clamp } from "./tools";
 import { isObject, isString } from "./type";
 
 /**
@@ -52,3 +53,27 @@ export function difference<D = any>(array1: D[], array2: D[]) {
     return un.filter((u) => !int.some(i => i === u));
 }
 
+/**
+ * 向数组指定索引插入元素
+ * @param arr 要操作的数组
+ * @param item 要插入的元素或元素数组
+ * @param index 插入位置的索引
+ * @param position 插入位置相对于索引的位置，'before' 表示在索引前插入，'after' 表示在索引后插入
+ * @returns 插入元素后的新数组
+ */
+export function insertByIndex<T>(arr: T[], item: T | T[], index: number, position: 'before' | 'after' = 'after',) {
+        const items = Array.isArray(item) ? item : [item];
+    if (arr.length === 0) {
+        return [...items];
+    }
+
+    const normalizedIndex = clamp(Math.trunc(index), 0, arr.length - 1);
+    const insertIndex =
+        position === 'before' ? normalizedIndex : normalizedIndex + 1;
+
+    return [
+        ...arr.slice(0, insertIndex),
+        ...items,
+        ...arr.slice(insertIndex),
+    ];
+}
